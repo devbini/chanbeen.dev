@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import {ArrowLeft} from 'lucide-react';
 
-import Header from '@/components/Header';
-import ProfileCard from '@/components/ProfileCard';
-import TagCloud from '@/components/TagCloud';
+import Header from '@/components/header';
+import ProfileCard from '@/components/profileCard';
+import TagCloud from '@/components/tagCloud';
 import PostCard from "@/components/postCard";
 import {getAllTags, getPostsByTag, getSortedPostsData} from '@/lib/posts';
 
