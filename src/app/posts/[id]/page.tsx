@@ -4,9 +4,9 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { ArrowLeft } from "lucide-react";
-import Header from '@/components/Header';
-import ProfileCard from '@/components/ProfileCard';
-import TagCloud from '@/components/TagCloud';
+import Header from '@/components/header';
+import ProfileCard from '@/components/profileCard';
+import TagCloud from '@/components/tagCloud';
 import TableOfContents from "@/components/tableOfContent";
 import { Badge } from '@/components/ui/badge';
 
