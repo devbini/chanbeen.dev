@@ -141,9 +141,18 @@ export default async function PostPage({ params }: { params: { id: string } }) {
                     prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
                     prose-p:leading-relaxed prose-li:marker:text-blue-500 
                     prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+
+                    prose-blockquote:before:content-none
+                    prose-blockquote:after:content-none
+                    prose-blockquote:border-l-4
+                    prose-blockquote:pl-6
+            
                     prose-code:before:content-none prose-code:after:content-none
-                    prose-code:bg-gray-100 prose-code:dark:bg-gray-800
+                    prose-code:dark:bg-gray-800
                     prose-code:px-2 prose-code:py-1 prose-code:rounded-md prose-code:font-normal
+                    prose-pre:code:bg-transparent
+                    prose-pre:code:p-0
+      
                     prose-pre:bg-gray-900 prose-pre:text-white prose-img:rounded-lg
                     prose-img:shadow-md
                   "
