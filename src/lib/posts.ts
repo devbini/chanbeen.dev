@@ -4,12 +4,15 @@ import matter from 'gray-matter';
 import { unified } from "unified";
 import { visit } from 'unist-util-visit';
 import remarkParse from "remark-parse";
-import remarkHtml from "remark-html";
+import remarkRehype from 'remark-rehype';
+import rehypeStringify from 'rehype-stringify';
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import type { Element, Root } from 'hast';
+import remarkGfm from 'remark-gfm';
 
 export type Post = {
-    id: string;
+    id: number;
     title: string;
     date: string;
     excerpt: string;
@@ -29,11 +32,10 @@ export function getSortedPostsData(): Post[] {
         const fullPath = path.join(postsDirectory, fileName);
         const fileContents = fs.readFileSync(fullPath, 'utf8');
         const matterResult = matter(fileContents);
-        const id = fileName.replace(/\.md$/, '');
+        
         return {
-            id,
-            ...(matterResult.data as Omit<Post, 'id'>),
-        } as Post;
+            ...(matterResult.data as Post),
+        };
     });
     return allPostsData.sort((a, b) => (a.date < b.date ? 1 : -1));
 }
@@ -45,11 +47,9 @@ export function getAllPosts(): Post[] {
         const fullPath = path.join(postsDirectory, fileName);
         const fileContents = fs.readFileSync(fullPath, 'utf8');
         const matterResult = matter(fileContents);
-        const id = fileName.replace(/\.md$/, '');
         return {
-            id,
-            ...(matterResult.data as Omit<Post, 'id'>)
-        } as Post;
+            ...(matterResult.data as Post),
+        };
     });
     return allPostsData;
 }
@@ -68,54 +68,60 @@ export function getAllTags(posts: Post[]): { tag: string; count: number }[] {
 }
 
 // 이미지 URL 변경
-export default function rehypeAddImageBaseUrl() {
-    return (tree: any) => {
-        visit(tree, 'element', (node) => {
-            if (node.tagName === 'img' && node.properties?.src?.startsWith('/')) {
-                node.properties.src = `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}${node.properties.src}`;
+function rehypeAddImageBaseUrl() {
+    const imageBaseUrl = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || '';
+    return (tree: Root) => {
+        visit(tree, 'element', (node: Element) => {
+            if (node.tagName === 'img' && node.properties?.src) {
+                const src = node.properties.src as string;
+                if (src.startsWith('/')) {
+                    node.properties.src = `${imageBaseUrl}${src}`;
+                }
             }
         });
     };
 }
 
 // 개별 포스트
-export async function
-getPostData(id: string): Promise<PostContentData | null> {
+export async function getPostData(id: string): Promise<PostContentData | null> {
     const fileNames = fs.readdirSync(postsDirectory);
 
-    for (const fileName of fileNames) {
+    const targetFileName = fileNames.find(fileName => {
         const fullPath = path.join(postsDirectory, fileName);
         const fileContents = fs.readFileSync(fullPath, 'utf8');
         const matterResult = matter(fileContents);
+        return matterResult.data.id?.toString() === id;
+    });
 
-        if (matterResult.data.id?.toString() === id) {
-            // @ts-ignore
-            const processedContent = await unified()
-                .use(remarkParse)
-                .use(remarkHtml)
-                .use(rehypeSlug)
-                .use(rehypeAutolinkHeadings, {
-                    behavior: 'wrap'
-                })
-                .use(rehypeAddImageBaseUrl)
-                .process(matterResult.content);
-
-            return {
-                id,
-                contentHtml: processedContent.toString(),
-                ...(matterResult.data as Omit<Post, 'id'>),
-            } as PostContentData;
-        }
+    if (!targetFileName) {
+        return null;
     }
 
-    return null;
+    const fullPath = path.join(postsDirectory, targetFileName);
+    const fileContents = fs.readFileSync(fullPath, 'utf8');
+    const matterResult = matter(fileContents);
+
+    const processedContent = await unified()
+        .use(remarkParse)
+        .use(remarkGfm)
+        .use(remarkRehype)
+        .use(rehypeSlug)
+        .use(rehypeAutolinkHeadings, { behavior: 'wrap' })
+        .use(rehypeAddImageBaseUrl)
+        .use(rehypeStringify)
+        .process(matterResult.content);
+
+    return {
+        contentHtml: processedContent.toString(),
+        ...(matterResult.data as Post),
+    };
 }
 
-// 게시글 별 태그 목록
+// 태그 페이지용
 export function getPostsByTag(tag: string): Post[] {
-    const allPosts = getAllPosts();
+    const allPosts = getSortedPostsData();
     const filteredPosts = allPosts.filter(post =>
         post.tags?.some(t => t.toLowerCase() === tag)
     );
-    return filteredPosts.sort((a, b) => (a.date < b.date ? 1 : -1));
+    return filteredPosts;
 }
