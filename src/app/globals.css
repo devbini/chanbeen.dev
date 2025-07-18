@@ -47,14 +47,22 @@
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
   }
+
+  .prose blockquote p:first-of-type::before {
+    content: none;
+  }
+
+  .prose blockquote p:last-of-type::after {
+    content: none;
+  }
 }
 
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
-
