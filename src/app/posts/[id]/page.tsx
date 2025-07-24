@@ -10,6 +10,7 @@ import ProfileCard from '@/components/profileCard';
 import TagCloud from '@/components/tagCloud';
 import TableOfContents from "@/components/tableOfContent";
 import { Badge } from '@/components/ui/badge';
+import GiscusComments from '@/components/giscusComments';
 
 import { getSortedPostsData, getAllTags, getPostData, Post, PostContentData } from '@/lib/posts';
 
@@ -160,13 +161,17 @@ export default async function PostPage({ params }: { params: { id: string } }) {
               />
             </article>
 
-            <div className="mt-8 pt-8 border-t dark:border-gray-700 text-center p-8 md:p-12">
+            <div className="mt-6 pt-8 border-t border-b dark:border-gray-700 text-center p-8 md:p-12">
               <Link
                 href="/"
                 className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md border text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                 <ArrowLeft className="w-4 h-4"/>
                 홈으로 돌아가기
               </Link>
+            </div>
+
+            <div className="mt-4 px-10 md:px-10 lg:px-10 mb-12">
+              <GiscusComments />
             </div>
           </div>
         </main>
