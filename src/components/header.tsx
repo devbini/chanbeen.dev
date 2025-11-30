@@ -8,7 +8,17 @@ export default function Header() {
                 김찬빈.dev 💻
             </Link>
             <nav className="flex items-center space-x-4">
-                <a href="https://github.com/devbini" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"><Github size={20} /></a>
+                <Link
+                    href="/resume"
+                    className="
+        text-sm font-bold
+        text-gray-700 dark:text-gray-300
+        hover:text-blue-600 dark:hover:text-blue-400
+        transition-colors mr-2
+    "
+                >
+                    Resume
+                </Link><a href="https://github.com/devbini" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"><Github size={20} /></a>
                 <a href="https://linkedin.com/in/devbini/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"><Linkedin size={20} /></a>
                 <Link href="/rss.xml" className="text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"><Rss size={20} /></Link>
             </nav>
