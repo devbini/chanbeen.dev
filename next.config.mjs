@@ -6,14 +6,16 @@ const imageHostname = imageBaseUrl ? imageBaseUrl.replace('https://', '') : null
 
 const nextConfig = {
     images: {
-        remotePatterns: imageHostname ? [
-            {
-                protocol: 'https',
-                hostname: imageHostname,
-                port: '',
-                pathname: '/**',
-            },
-        ] : [],
+        remotePatterns: imageHostname
+            ? [
+                  {
+                      protocol: 'https',
+                      hostname: imageHostname,
+                      port: '',
+                      pathname: '/**',
+                  },
+              ]
+            : [],
     },
 };
 

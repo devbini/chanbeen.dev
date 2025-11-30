@@ -3,12 +3,12 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
-type Post = { id: number; title: string; date: string; excerpt: string; };
+type Post = { id: number; title: string; date: string; excerpt: string };
 
 function getSortedPostsData(): Post[] {
     const postsDirectory = path.join(process.cwd(), 'posts');
     const fileNames = fs.readdirSync(postsDirectory);
-    const allPostsData = fileNames.map(fileName => {
+    const allPostsData = fileNames.map((fileName) => {
         const fullPath = path.join(postsDirectory, fileName);
         const fileContents = fs.readFileSync(fullPath, 'utf8');
         const matterResult = matter(fileContents);
@@ -23,14 +23,14 @@ export async function GET() {
 
     const feed = new RSS({
         title: '김찬빈.dev 💻',
-        description: 'Dev-bini\'s Tech Blog.',
+        description: "Dev-bini's Tech Blog.",
         feed_url: `${siteUrl}/rss.xml`,
         site_url: siteUrl,
         language: 'ko',
     });
 
     // 피드 아이템 추가
-    allPosts.forEach(post => {
+    allPosts.forEach((post) => {
         feed.item({
             title: post.title,
             description: post.excerpt,

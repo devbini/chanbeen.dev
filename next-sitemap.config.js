@@ -1,5 +1,5 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: 'https://chanbeen.com',
-  generateRobotsTxt: true,
+    siteUrl: 'https://chanbeen.com',
+    generateRobotsTxt: true,
 };

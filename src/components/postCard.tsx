@@ -1,10 +1,11 @@
-import { Post } from "@/lib/posts";
-import Image from "next/image";
-import Link from "next/link";
+import { Post } from '@/lib/posts';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export default function PostCard({ post }: { post: Post }) {
     return (
-        <article className="
+        <article
+            className="
             group flex items-start space-x-6
             p-4 rounded-xl border
             bg-white dark:bg-gray-900/50
@@ -12,7 +13,8 @@ export default function PostCard({ post }: { post: Post }) {
             transition-all duration-300
             hover:bg-gray-100 dark:hover:bg-gray-800/50
             hover:shadow-md
-        ">
+        "
+        >
             {post.thumbnail && (
                 <div className="flex-shrink-0 w-32 h-20 relative">
                     <Image
