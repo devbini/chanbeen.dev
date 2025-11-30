@@ -5,7 +5,7 @@ export default function TableOfContents({
 }) {
     return (
         <nav
-            className="mt-6 mb-6 p-4 border rounded-xl bg-white dark:bg-gray-900/50 dark:border-gray-800 text-xs leading-tight shadow-sm max-h-[60vh] overflow-y-auto">
+            className="mt-6 mb-6 p-4 border rounded-xl bg-white dark:bg-gray-900/50 dark:border-gray-800 text-xs leading-tight shadow-sm">
             <h2 className="font-semibold text-black dark:text-gray-200 mb-3">📚 목차</h2>
             <ul className="space-y-1">
                 {headings.map((h) => {

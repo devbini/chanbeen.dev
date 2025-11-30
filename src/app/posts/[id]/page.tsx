@@ -73,7 +73,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
 
           {/* 왼쪽 사이드바 */}
           <aside className="hidden lg:block lg:col-span-1">
-            <div className="sticky top-24">
+            <div className="no-scrollbar sticky top-24 max-h-[calc(100vh-9rem)] overflow-y-auto pr-2">
               <ProfileCard/>
               <TagCloud tags={allTagsForCloud}/>
               {headings.length > 0 && <TableOfContents headings={headings}/>}
