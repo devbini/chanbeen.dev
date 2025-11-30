@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Badge } from "@/components/ui/badge";
+import { Badge } from '@/components/ui/badge';
 
 type TagCount = {
     tag: string;
@@ -13,7 +13,10 @@ export default function TagCloud({ tags }: { tags: TagCount[] }) {
             <div className="flex flex-wrap gap-2">
                 {tags.map(({ tag, count }) => (
                     <Link key={tag} href={`/tags/${tag.toLowerCase()}`}>
-                        <Badge variant="secondary" className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                        <Badge
+                            variant="secondary"
+                            className="hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                        >
                             {tag} <span className="ml-1.5 text-gray-400">{count}</span>
                         </Badge>
                     </Link>
