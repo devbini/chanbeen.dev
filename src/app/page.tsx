@@ -6,6 +6,7 @@ import ProfileCard from '@/components/profileCard';
 import TagCloud from '@/components/tagCloud';
 import PostCard from '@/components/postCard';
 import { getSortedPostsData, getAllTags, Post } from '@/lib/posts';
+import CategoryList from "@/components/categoryList";
 
 // 1. 최신 글
 function FeaturedPost({ post }: { post: Post }) {
@@ -52,8 +53,9 @@ export default function Home() {
                 <main className="grid grid-cols-1 lg:grid-cols-4 gap-8 py-8">
                     {/* 왼쪽 사이드바 */}
                     <aside className="lg:col-span-1">
-                        <div className="sticky top-8">
+                        <div className="sticky top-24 space-y-6">
                             <ProfileCard />
+                            <CategoryList />
                             <TagCloud tags={allTags} />
                         </div>
                     </aside>
