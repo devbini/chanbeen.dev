@@ -14,9 +14,10 @@ import remarkGfm from 'remark-gfm';
 export type Post = {
     id: number;
     title: string;
+    category: string;
     date: string;
     excerpt: string;
-    tags?: string[];
+    tags: string[];
     thumbnail?: string;
 };
 
