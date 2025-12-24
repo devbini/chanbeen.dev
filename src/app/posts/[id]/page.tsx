@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import GiscusComments from '@/components/giscusComments';
 
 import { getSortedPostsData, getAllTags, getPostData, Post, PostContentData } from '@/lib/posts';
+import CategoryList from "@/components/categoryList";
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
@@ -66,9 +67,6 @@ export default async function PostPage({ params }: { params: { id: string } }) {
         },
     );
 
-    const allPostsForTags: Post[] = getSortedPostsData();
-    const allTagsForCloud = getAllTags(allPostsForTags);
-
     return (
         <div className="bg-gray-50 dark:bg-black min-h-screen text-gray-800 dark:text-gray-200">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -79,9 +77,9 @@ export default async function PostPage({ params }: { params: { id: string } }) {
                 <main className="grid grid-cols-1 lg:grid-cols-4 gap-8 py-8">
                     {/* 왼쪽 사이드바 */}
                     <aside className="hidden lg:block lg:col-span-1">
-                        <div className="no-scrollbar sticky top-24 max-h-[calc(100vh-9rem)] overflow-y-auto pr-2">
+                        <div className="no-scrollbar sticky top-24 max-h-[calc(100vh-9rem)] overflow-y-auto pr-2 space-y-6">
                             <ProfileCard />
-                            <TagCloud tags={allTagsForCloud} />
+                            <CategoryList />
                             {headings.length > 0 && <TableOfContents headings={headings} />}
                         </div>
                     </aside>
@@ -173,12 +171,19 @@ export default async function PostPage({ params }: { params: { id: string } }) {
                             />
                         </article>
 
-                        <div className="mt-6 pt-8 border-t border-b dark:border-gray-700 text-center p-8 md:p-12">
+                        <div className="mt-16 pt-8 border-t dark:border-gray-800 flex justify-center">
                             <Link
                                 href="/"
-                                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md border text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                                className="
+                                    group flex items-center gap-2 px-5 py-2.5
+                                    rounded-full border bg-white dark:bg-black
+                                    text-sm font-medium text-gray-600 dark:text-gray-300
+                                    hover:border-gray-400 dark:hover:border-gray-600
+                                    hover:text-black dark:hover:text-white
+                                    transition-all
+                                "
                             >
-                                <ArrowLeft className="w-4 h-4" />
+                                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                                 홈으로 돌아가기
                             </Link>
                         </div>
