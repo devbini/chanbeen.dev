@@ -20,6 +20,7 @@
         ]
     },
     "dependencies": {
+        "@aws-sdk/client-ses": "^3.968.0",
         "@giscus/react": "^3.1.0",
         "@radix-ui/react-slot": "^1.0.2",
         "class-variance-authority": "^0.7.0",
@@ -30,6 +31,7 @@
         "next-sitemap": "^4.2.3",
         "react": "^18",
         "react-dom": "^18",
+        "react-icons": "^5.5.0",
         "rehype-autolink-headings": "^7.1.0",
         "rehype-parse": "^9.0.1",
         "rehype-rewrite": "^4.0.2",
@@ -39,6 +41,7 @@
         "remark-parse": "^11.0.0",
         "remark-rehype": "^11.1.2",
         "rss": "^1.2.2",
+        "styled-components": "^6.3.5",
         "tailwind-merge": "^2.3.0",
         "unified": "^11.0.5"
     },
@@ -48,6 +51,7 @@
         "@types/react": "^18",
         "@types/react-dom": "^18",
         "@types/rss": "^0.0.32",
+        "@types/styled-components": "^5.1.36",
         "autoprefixer": "^10.4.21",
         "eslint": "^8",
         "eslint-config-next": "14.2.3",
