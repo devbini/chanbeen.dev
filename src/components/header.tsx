@@ -15,7 +15,7 @@ export default function Header() {
                 </LogoLink>
 
                 <NavMenu>
-                    <NavItem href="/resume">Resume</NavItem>
+                    <NavItem href="/about">Resume</NavItem>
 
                     <DropdownWrapper>
                         <span className="trigger">
