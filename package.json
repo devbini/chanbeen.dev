@@ -20,6 +20,7 @@
         ]
     },
     "dependencies": {
+        "@aws-sdk/client-ses": "^3.968.0",
         "@giscus/react": "^3.1.0",
         "@radix-ui/react-slot": "^1.0.2",
         "class-variance-authority": "^0.7.0",

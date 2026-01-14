@@ -39,18 +39,12 @@ export default async function BlogPostPage({ params }: { params: { id: string } 
             headings.push({
                 id,
                 text: cleanText,
-                level: Number(level)
+                level: Number(level),
             });
 
             return `<h${level} id="${id}"${attrs}>${innerText}</h${level}>`;
-        }
+        },
     );
 
-    return (
-        <ClientPage
-            postData={postData}
-            contentWithIds={contentWithIds}
-            headings={headings}
-        />
-    );
+    return <ClientPage postData={postData} contentWithIds={contentWithIds} headings={headings} />;
 }

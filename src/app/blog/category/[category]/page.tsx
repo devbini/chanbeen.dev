@@ -14,6 +14,6 @@ export default function CategoryPage({ params }: Props) {
 
 // SSG 처리용
 export function generateStaticParams() {
-    const categories = ["devops", "backend", "frontend", "essay"];
+    const categories = ['devops', 'backend', 'frontend', 'essay'];
     return categories.map((category) => ({ category }));
 }

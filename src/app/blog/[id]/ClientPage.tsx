@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { ArrowLeft, Calendar, Tag } from 'lucide-react';
 import type { PostContentData } from '@/lib/posts';
 import GiscusComments from '@/components/giscusComments';
-import {useState, useEffect} from "react";
+import { useState, useEffect } from 'react';
 
 interface ClientPageProps {
     postData: PostContentData;
@@ -18,7 +18,7 @@ export default function ClientPage({ postData, contentWithIds, headings }: Clien
     const [scrollProgress, setScrollProgress] = useState(0);
 
     const bgImage = postData.thumbnail
-        ? (process.env.NEXT_PUBLIC_IMAGE_BASE_URL || "") + postData.thumbnail
+        ? (process.env.NEXT_PUBLIC_IMAGE_BASE_URL || '') + postData.thumbnail
         : null;
 
     useEffect(() => {
@@ -36,7 +36,7 @@ export default function ClientPage({ postData, contentWithIds, headings }: Clien
 
     return (
         <PageContainer>
-            <ProgressBar style={{ width: `${scrollProgress}%` }}/>
+            <ProgressBar style={{ width: `${scrollProgress}%` }} />
 
             <HeroSection $hasImage={!!bgImage}>
                 {bgImage && (
@@ -53,8 +53,10 @@ export default function ClientPage({ postData, contentWithIds, headings }: Clien
 
                 <HeroContent>
                     <MetaInfo>
-                        <span className="date"><Calendar size={16}/> {postData.date}</span>
-                        {postData.tags?.map(tag => (
+                        <span className="date">
+                            <Calendar size={16} /> {postData.date}
+                        </span>
+                        {postData.tags?.map((tag) => (
                             <HeroBadge key={tag}>#{tag}</HeroBadge>
                         ))}
                     </MetaInfo>
@@ -92,7 +94,7 @@ export default function ClientPage({ postData, contentWithIds, headings }: Clien
                                         onClick={(e) => {
                                             e.preventDefault();
                                             document.getElementById(heading.id)?.scrollIntoView({
-                                                behavior: 'smooth'
+                                                behavior: 'smooth',
                                             });
                                         }}
                                     >
@@ -109,10 +111,10 @@ export default function ClientPage({ postData, contentWithIds, headings }: Clien
 }
 
 const PageContainer = styled.div`
-  min-height: 100vh;
-  background-color: #ffffff;
-  color: #1e293b;
-  padding-bottom: 8rem;
+    min-height: 100vh;
+    background-color: #ffffff;
+    color: #1e293b;
+    padding-bottom: 8rem;
 `;
 
 const ProgressBar = styled.div`
@@ -135,17 +137,18 @@ const HeroSection = styled.header<{ $hasImage: boolean }>`
     background-color: #1e293b;
     margin-bottom: 5rem;
     margin-top: 4rem;
-    background: ${(props) => props.$hasImage ? 'linear-gradient(135deg, #0f172a 0%, #334155 100%)' : ''};  
+    background: ${(props) =>
+        props.$hasImage ? 'linear-gradient(135deg, #0f172a 0%, #334155 100%)' : ''};
 
     @media (max-width: 768px) {
-    height: 350px;
-}
+        height: 350px;
+    }
 `;
 
 const HeroOverlay = styled.div`
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.8) 100%);
     z-index: 1;
 `;
 
@@ -163,7 +166,7 @@ const HeroTitle = styled.h1`
     font-weight: 800;
     line-height: 1.2;
     margin-top: 1rem;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     word-break: keep-all;
 
     @media (max-width: 768px) {
@@ -254,7 +257,7 @@ const TocList = styled.ul`
 
 const TocItem = styled.li<{ $level: number }>`
     font-size: 0.9rem;
-    padding-left: ${props => (props.$level - 2) * 0.5}rem;
+    padding-left: ${(props) => (props.$level - 2) * 0.5}rem;
     position: relative;
     transition: all 0.2s;
 
@@ -277,7 +280,10 @@ const MarkdownBody = styled.div`
     line-height: 1.8;
     color: #334155;
 
-    h1, h2, h3, h4 {
+    h1,
+    h2,
+    h3,
+    h4 {
         color: #0f172a;
         font-weight: 800;
         margin-top: 3.5rem;
@@ -286,11 +292,21 @@ const MarkdownBody = styled.div`
         scroll-margin-top: 6rem;
     }
 
-    h2 { font-size: 1.75rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; }
-    h3 { font-size: 1.4rem; }
-    h4 { font-size: 1.2rem; }
+    h2 {
+        font-size: 1.75rem;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 0.5rem;
+    }
+    h3 {
+        font-size: 1.4rem;
+    }
+    h4 {
+        font-size: 1.2rem;
+    }
 
-    p { margin-bottom: 1.5rem; }
+    p {
+        margin-bottom: 1.5rem;
+    }
 
     a {
         color: #2563eb;
@@ -298,15 +314,29 @@ const MarkdownBody = styled.div`
         font-weight: 600;
         border-bottom: 1px solid transparent;
         transition: border-bottom 0.2s;
-        &:hover { border-bottom-color: #2563eb; }
+        &:hover {
+            border-bottom-color: #2563eb;
+        }
     }
 
-    ul, ol { margin-bottom: 1.5rem; padding-left: 1.5rem; }
-    ul { list-style: disc; }
-    ol { list-style: decimal; }
-    li { margin-bottom: 0.5rem; }
+    ul,
+    ol {
+        margin-bottom: 1.5rem;
+        padding-left: 1.5rem;
+    }
+    ul {
+        list-style: disc;
+    }
+    ol {
+        list-style: decimal;
+    }
+    li {
+        margin-bottom: 0.5rem;
+    }
 
-    ul li::marker { color: #cbd5e1; }
+    ul li::marker {
+        color: #cbd5e1;
+    }
     ol li::marker {
         color: #2563eb;
         font-weight: 700;
@@ -320,7 +350,9 @@ const MarkdownBody = styled.div`
         margin: 2rem 0;
         font-style: italic;
         color: #475569;
-        p:last-child { margin-bottom: 0; }
+        p:last-child {
+            margin-bottom: 0;
+        }
     }
 
     pre {
@@ -333,7 +365,9 @@ const MarkdownBody = styled.div`
         line-height: 1.6;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-family:
+            ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+            monospace;
         font-size: 0.9rem;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
@@ -380,7 +414,8 @@ const MarkdownBody = styled.div`
         margin: 2rem 0;
         font-size: 0.95rem;
 
-        th, td {
+        th,
+        td {
             border: 1px solid #e2e8f0;
             padding: 0.75rem 1rem;
             text-align: left;
