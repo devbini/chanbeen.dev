@@ -25,16 +25,16 @@ export default function Header() {
                         <DropdownContent>
                             <DropdownBox>
                                 <div className="label">Categories</div>
-                                <DropdownItem href="/blog/devops">
+                                <DropdownItem href="/blog/category/devops">
                                     <FaCloud className="icon sky" /> <span>DevOps & Cloud</span>
                                 </DropdownItem>
-                                <DropdownItem href="/blog/backend">
+                                <DropdownItem href="/blog/category/backend">
                                     <FaCoffee className="icon amber" /> <span>Backend & Java</span>
                                 </DropdownItem>
-                                <DropdownItem href="/blog/frontend">
+                                <DropdownItem href="/blog/category/frontend">
                                     <FaReact className="icon blue" /> <span>Frontend</span>
                                 </DropdownItem>
-                                <DropdownItem href="/blog/essay">
+                                <DropdownItem href="/blog/category/essay">
                                     <FaPenNib className="icon slate" /> <span>Essay</span>
                                 </DropdownItem>
                                 <div className="divider"></div>

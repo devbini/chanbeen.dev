@@ -53,7 +53,7 @@ export default function BlogView({ posts, currentCategory }: BlogViewProps) {
                         {CATEGORIES.map((cat) => (
                             <Link
                                 key={cat}
-                                href={cat === 'All' ? '/blog' : `/blog/${cat.toLowerCase()}`}
+                                href={cat === 'All' ? '/blog' : `/blog/category/${cat.toLowerCase()}`}
                                 passHref
                                 legacyBehavior
                             >

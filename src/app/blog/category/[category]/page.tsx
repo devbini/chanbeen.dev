@@ -5,13 +5,6 @@ type Props = {
     params: { category: string };
 };
 
-export async function generateMetadata({ params }: Props) {
-    return {
-        title: `${decodeURIComponent(params.category).toUpperCase()} | 찬빈.com`,
-        description: `이 기록이, 도움이 되시길 바랍니다.`,
-    };
-}
-
 export default function CategoryPage({ params }: Props) {
     const posts = getSortedPostsData();
     const category = decodeURIComponent(params.category);
