@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 
 const PROFILE_IMAGE_URL = (process.env.NEXT_PUBLIC_IMAGE_BASE_URL || "") + "/resume_profile.jpg";
+const RESUME_FILE_URL = (process.env.NEXT_PUBLIC_IMAGE_BASE_URL || "") + "/KimChanbeen_Resume.pdf";
 
 const TOC_ITEMS = [
     { id: 'profile', text: 'Intro', level: 2 },
@@ -27,6 +28,41 @@ const MAIN_SKILLS = new Set(['Java', 'Spring Boot', 'Kotlin', 'JPA', 'AWS', 'Azu
 export default function ResumePage() {
     const [activeId, setActiveId] = useState<string>('');
     const headingElementsRef = useRef<{ [key: string]: IntersectionObserverEntry }>({});
+    const [scrollProgress, setScrollProgress] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const totalHeight = document.body.scrollHeight - window.innerHeight;
+            if (totalHeight > 0) {
+                const progress = (window.scrollY / totalHeight) * 100;
+                setScrollProgress(progress);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const handleDownloadResume = async () => {
+        try {
+            const response = await fetch(RESUME_FILE_URL);
+
+            if (!response.ok) throw new Error("Download failed");
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "KimChanbeen_Resume.pdf";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (e) {
+            console.error(e);
+            window.open(RESUME_FILE_URL, '_blank');
+        }
+    };
 
     useEffect(() => {
         const callback = (entries: IntersectionObserverEntry[]) => {
@@ -68,13 +104,13 @@ export default function ResumePage() {
 
     return (
         <PageContainer>
-            <ProgressBar />
+            <ProgressBar style={{ width: `${scrollProgress}%` }}/>
 
             <HeroSection>
                 <HeroOverlay />
                 <HeroContent>
                     <MetaInfo>
-                        <span className="job-title"><Terminal size={14} /> Full Stack Developer</span>
+                        <span className="job-title"><Terminal size={14} /> Full Stack Developer (Cloud & DevOps Engineer)</span>
                         <div className="social-links">
                             <a href="https://github.com/devbini" target="_blank"><Github size={16} /> GitHub</a>
                             <a href="https://linkedin.com/in/devbini" target="_blank"><Linkedin size={16} /> LinkedIn</a>
@@ -86,7 +122,7 @@ export default function ResumePage() {
                     </HeroTitle>
                     <p className="hero-desc">
                         &quot;도움이 되는 것에 보람을 느끼는 엔지니어&quot;<br />
-                        개인의 성장을 팀의 성장으로 확장하는 문화를 만듭니다.
+                        개인의 성장이 팀의 성장으로 확장되는 문화를 좋아하고, 도전을 멈추지 않습니다.
                     </p>
                 </HeroContent>
             </HeroSection>
@@ -104,12 +140,11 @@ export default function ResumePage() {
                                 </p>
                                 <p>
                                     지난 6년간 웹 개발 전반과 인프라를 아우르며 <strong>&apos;숲과 나무를 동시에 보는 시야&apos;</strong>를 갖췄습니다.
-                                    <strong>500만 건 이상의 데이터 처리 최적화(40s→1s)</strong>와 <strong>온프레미스 운영, 클라우드 인프라 구축 및 마이그레이션</strong> 경험을 바탕으로
+                                    <br/><strong>500만 건 이상의 데이터 처리 최적화(40s→1s)</strong>와 <strong>온프레미스 운영, 클라우드 인프라 구축 및 마이그레이션</strong> 경험 등을 바탕으로
                                     비즈니스 문제를 기술적으로 해결하는 데 집중합니다.
                                 </p>
                                 <p>
-                                    단순한 기능 구현을 넘어, <strong>오픈소스 기여</strong>와 <strong>사내 DevOps 문화 도입</strong>을 주도하며
-                                    팀 전체의 엔지니어링 역량을 높이는 <strong>&apos;함께 성장하는 개발자&apos;</strong>를 지향합니다.
+                                    기능 구현을 넘어 <strong>'왜'</strong>를 고민하며, <strong>오픈소스 기여와 컨퍼런스 연사, 멘토링 활동</strong>으로 지식의 선순환을 바라고 있습니다. 이러한 경험을 바탕으로, 사내 DevOps 문화를 주도하며 팀 전체의 엔지니어링 역량을 높이는 <strong>'함께 성장하는 개발자'</strong>가 되고자 합니다.
                                 </p>
                             </div>
                             <div className="profile-img">
@@ -135,7 +170,7 @@ export default function ResumePage() {
                                 </div>
                                 <div className="content-col">
                                     <h3 className="company">(주)웨어밸리 (WareValley)</h3>
-                                    <p className="role">기술연구소 시트러스팀 / 선임 연구원</p>
+                                    <p className="role">기술연구소 시트러스팀 / 선임 연구원 (Full Stack)</p>
                                     <ul className="details">
                                         <li>외부망 팀 개발 인프라(GitLab + Jenkins + ArgoCD) 구축 및 파이프라인 자동화.</li>
                                         <li><strong>Django(Python)</strong> 시스템 React 마이그레이션 및 Spring Boot/Java 프로젝트 진행.</li>
@@ -152,7 +187,7 @@ export default function ResumePage() {
                                 </div>
                                 <div className="content-col">
                                     <h3 className="company">Codeit (코드잇)</h3>
-                                    <p className="role">Full Stack Sprint Mentor</p>
+                                    <p className="role">Full Stack Sprint 9기 Mentor</p>
                                     <ul className="details">
                                         <li>부트캠프 수강생 대상 1:1 코드 리뷰 및 기술 멘토링 진행 (React, Express).</li>
                                         <li>취업 준비 주니어 개발자들의 기술적 문제 해결을 돕고, 모의면접 진행.</li>
@@ -162,7 +197,7 @@ export default function ResumePage() {
 
                             <TimelineItem>
                                 <div className="date-col">
-                                    <span className="period">2019.10 - 2025.04</span>
+                                    <span className="period">2019.10 - 2025.03</span>
                                     <span className="duration">5 yrs 7 mos</span>
                                 </div>
                                 <div className="content-col">
@@ -193,7 +228,7 @@ export default function ResumePage() {
                                 <Badge $variant="purple">Open PR</Badge>
                             </div>
                             <p className="desc">
-                                ArgoCD CLI로 클러스터 추가 시, 번들링된 내부 Redis 대신 <strong>외부 Redis(External Redis)</strong>를 사용할 수 있도록 <code>ARGOCD_REDIS_SERVER</code> 환경변수 지원 기능을 추가했습니다. (테스트 파일 작성 및 이슈 해결)
+                                ArgoCD CLI로 클러스터 추가 시, 번들링된 내부 Redis 대신 <strong>외부 Redis(External Redis)</strong>를 사용할 수 있도록 <code>ARGOCD_REDIS_SERVER</code> 환경변수 기능을 추가했습니다. (테스트 파일 작성 및 이슈 해결 포함)
                             </p>
                             <div className="tech-stack-row">
                                 <TechTag>Go</TechTag><TechTag>Kubernetes</TechTag><TechTag>Redis</TechTag>
@@ -451,7 +486,7 @@ export default function ResumePage() {
                         <ListContainer>
                                 <ListItem>
                                     <div className="text-col">
-                                        <div className="main-text">"유명한 기술이 과연 정답인가?"</div>
+                                        <div className="main-text">"유명한 기술이 정답인가?"</div>
                                         <div className="sub-text">TEO Conf 연사 (2025.12)</div>
                                     </div>
                                 </ListItem>
@@ -488,7 +523,7 @@ export default function ResumePage() {
                             </TocList>
                         </TocBox>
 
-                        <DownloadBtn>
+                        <DownloadBtn onClick={handleDownloadResume}>
                             <Download size={16} /> Download Resume
                         </DownloadBtn>
 
@@ -534,11 +569,6 @@ const PageContainer = styled.div`
     padding-bottom: 8rem;
 `;
 
-const scrollProgress = keyframes`
-    from { width: 0%; }
-    to { width: 100%; }
-`;
-
 const ProgressBar = styled.div`
     position: fixed;
     top: 0;
@@ -546,9 +576,7 @@ const ProgressBar = styled.div`
     height: 4px;
     background: linear-gradient(to right, #3b82f6, #8b5cf6);
     z-index: 100;
-    width: 0%;
-    animation: ${scrollProgress} auto linear;
-    animation-timeline: scroll();
+    transition: width 0.1s ease-out;
 `;
 
 const HeroSection = styled.header`
@@ -719,7 +747,7 @@ const TocItem = styled.li<{ $active: boolean; $level: number }>`
     }
 `;
 
-const DownloadBtn = styled.a`
+const DownloadBtn = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
@@ -731,6 +759,8 @@ const DownloadBtn = styled.a`
     font-size: 0.875rem;
     font-weight: 600;
     border-radius: 0.75rem;
+    border: none; /* 버튼 기본 테두리 제거 */
+    cursor: pointer; /* 마우스 포인터 추가 */
     text-decoration: none;
     transition: all 0.2s;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
