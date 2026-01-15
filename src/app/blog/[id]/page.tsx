@@ -18,6 +18,39 @@ export async function generateStaticParams() {
     });
 }
 
+export async function generateMetadata({ params }: { params: { id: string } }) {
+    const postData: PostContentData | null = await getPostData(params.id);
+
+    if (!postData) {
+        notFound();
+    }
+
+    return {
+        title: `${postData.title} | 찬빈.com`,
+        description: `[찬빈.com] ${postData.excerpt}`,
+        openGraph: {
+            title: postData.title,
+            description: `[찬빈.com] ${postData.excerpt}`,
+            images: [
+                {
+                    url: process.env.NEXT_PUBLIC_IMAGE_BASE_URL + postData.thumbnail!,
+                    width: 1200,
+                    height: 630,
+                    alt: postData.title,
+                },
+            ],
+            type: 'article',
+            locale: 'ko_KR',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: postData.title,
+            description: `[찬빈.com] ${postData.excerpt}`,
+            images: [process.env.NEXT_PUBLIC_IMAGE_BASE_URL + postData.thumbnail!],
+        },
+    };
+}
+
 export default async function BlogPostPage({ params }: { params: { id: string } }) {
     const postData: PostContentData | null = await getPostData(params.id);
 
