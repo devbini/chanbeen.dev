@@ -11,7 +11,7 @@ export default function Header() {
             <NavContainer>
                 <LogoLink href="/">
                     <Terminal size={20} className="icon" />
-                    <span>CHANBEEN.COM 💻</span>
+                    <span>CHANBEEN.COM</span>
                 </LogoLink>
 
                 <NavMenu>
