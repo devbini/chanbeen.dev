@@ -4,8 +4,10 @@ import './globals.css';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import StyledComponentsRegistry from '@/lib/registry';
+import Script from "next/script";
 
 const inter = Inter({ subsets: ['latin'] });
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 export const metadata: Metadata = {
     title: '찬빈.com | 소프트웨어 엔지니어 기술 블로그',
@@ -44,9 +46,28 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
+        <html lang="ko">
             <body className={`${inter.className} antialiased`}>
-                <StyledComponentsRegistry>
+            {GA_ID && (
+                <>
+                    <Script
+                        src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+                        strategy="afterInteractive"
+                    />
+                    <Script id="google-analytics" strategy="afterInteractive">
+                        {`
+                                window.dataLayer = window.dataLayer || [];
+                                function gtag(){dataLayer.push(arguments);}
+                                gtag('js', new Date());
+
+                                gtag('config', '${GA_ID}');
+                            `}
+                    </Script>
+                </>
+            )}
+
+
+            <StyledComponentsRegistry>
                     <Header />
                     {children}
                     <Footer />
