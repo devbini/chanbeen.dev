@@ -21,15 +21,14 @@ export async function POST(request: Request) {
         }
 
         const params = {
-            Source: process.env.ADMIN_GMAIL_ADDRESS as string,
+            Source: process.env.ADMIN_SEND_EMAIL as string,
             Destination: {
-                ToAddresses: [process.env.ADMIN_GMAIL_ADDRESS as string],
+                ToAddresses: [process.env.ADMIN_RECEIVE_EMAIL as string],
             },
             ReplyToAddresses: [email],
             Message: {
                 Subject: {
                     Data: `[포트폴리오 문의] ${name}님으로부터 메시지`,
-
                     Charset: 'UTF-8',
                 },
                 Body: {

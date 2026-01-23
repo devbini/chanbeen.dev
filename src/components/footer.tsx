@@ -9,7 +9,7 @@ export default function Footer() {
             <div className="socials">
                 <Link href="https://github.com/devbini">GitHub</Link>
                 <Link href="https://linkedin.com/in/devbini">LinkedIn</Link>
-                <Link href="mailto:flqld86851@gmail.com">Email</Link>
+                <Link href="mailto:contact@chanbeen.com">Email</Link>
             </div>
             &copy; {new Date().getFullYear()} Chan Been Kim. All rights reserved.
         </FooterWrapper>
