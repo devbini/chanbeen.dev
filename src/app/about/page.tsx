@@ -384,6 +384,34 @@ export default function ResumePage() {
                                 <GitPullRequest size={14} /> View Pull Request
                             </a>
                         </ProjectCard>
+
+                        {/* Spine */}
+                        <ProjectCard>
+                            <div className="card-header">
+                                <div>
+                                    <h3>Spine (Go Web Framework)</h3>
+                                    <p className="sub">Contributor (Pull Request #2)</p>
+                                </div>
+                                <Badge $variant="purple">Merged</Badge>
+                            </div>
+                            <p className="desc">
+                                Go 기반 웹 프레임워크 Spine에 <strong>Configurable Graceful Shutdown</strong> 메커니즘을 설계 및 구현했습니다.<br/>
+                                배포 시 요청 유실 방지를 위해 시그널 핸들링 로직을 도입하고, 메인테이너와의 리뷰를 통해 <code>pkg/boot</code> 패키지 분리 및 설정 구조체(Options) 리팩토링을 주도하여 아키텍처 개선에 기여했습니다.
+                            </p>
+                            <div className="tech-stack-row">
+                                <TechTag>Go</TechTag>
+                                <TechTag>Web Framework</TechTag>
+                                <TechTag>System Programming</TechTag>
+                                <TechTag>Refactoring</TechTag>
+                            </div>
+                            <a
+                                href="https://github.com/NARUBROWN/Spine/pull/2"
+                                target="_blank"
+                                className="link"
+                            >
+                                <GitPullRequest size={14} /> View Merged PR
+                            </a>
+                        </ProjectCard>
                     </Section>
 
                     {/* Paper */}
@@ -510,6 +538,7 @@ export default function ResumePage() {
                                         'Node.js',
                                         'Express.js',
                                         'Python',
+                                        'GO',
                                     ].map((s) => (
                                         <SkillTag key={s} $highlight={MAIN_SKILLS.has(s)}>
                                             {s}
