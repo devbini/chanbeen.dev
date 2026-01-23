@@ -505,18 +505,51 @@ export default function ResumePage() {
                                 <div className="tech-stack-row">
                                     <TechTag>React</TechTag>
                                     <TechTag>PWA</TechTag>
-                                    <TechTag>Vercel</TechTag>
+                                    <TechTag>AWS</TechTag>
+                                    <TechTag>Azure</TechTag>
                                 </div>
                                 <ul className="details">
-                                    <li>
-                                        건물 내 임직원을 위한 식단 확인 웹 서비스 기획 및 개발,
-                                        운영.
-                                    </li>
-                                    <li>
-                                        <strong>DAU 50+</strong> 달성, 사용자 피드백 루프를 통한
-                                        기능 개선 경험.
-                                    </li>
+                                    <li><strong>AWS에서 Azure로의 인프라 마이그레이션</strong> 전담 및 운영 비용 최적화 설계</li>
+                                    <li>서비스 기획부터 아키텍처 설계, 배포 및 운영 전 과정을 주도하여 <strong>DAU 50+</strong> 달성</li>
+                                    <li><strong>JWT 기반 인증 체계 및 CSRF 방어</strong> 로직 구현을 통한 사용자 보안성 강화</li>
+                                    <li><strong>PWA(Progressive Web App)</strong> 기술을 적용한 모바일 최적화 및 오프라인 대응 환경 구축</li>
                                 </ul>
+                                <a
+                                    href="https://github.com/devbini/today-menu"
+                                    target="_blank"
+                                    className="link"
+                                    style={{ marginTop: '1rem', display: 'inline-flex' }}
+                                >
+                                    <Github size={14} /> View Project (GitHub)
+                                </a>
+                            </ProjectCard>
+
+                            <ProjectCard>
+                                <div className="card-header">
+                                    <h3>AI Code Review Bot</h3>
+                                    <Badge $variant="gray">Personal Project</Badge>
+                                </div>
+                                <p className="role">Solo Developer & Maintainer</p>
+                                <div className="tech-stack-row">
+                                    <TechTag>Python</TechTag>
+                                    <TechTag>Ollama (LLM)</TechTag>
+                                    <TechTag>Docker</TechTag>
+                                    <TechTag>GitHub Actions</TechTag>
+                                </div>
+                                <ul className="details">
+                                    <li><strong>Ollama(Local LLM)</strong>를 활용한 GitHub PR 자동 코드 리뷰 및 피드백 시스템 구축</li>
+                                    <li>보안을 고려한 폐쇄망용 사내 맞춤형 리뷰 봇 제안으로 <strong>사내 AI 활용 공모전 대상</strong> 수상</li>
+                                    <li><strong>Docker Hub 배포 및 패키징</strong>을 통한 설치 편의성 개선 및 GitHub Actions 연동 가이드 제작</li>
+                                    <li>코드 품질 향상 및 리뷰 시간 단축을 통한 엔지니어링 생산성 개선 프로세스 정립</li>
+                                </ul>
+                                <a
+                                    href="https://github.com/devbini/git-svn-reviewbot"
+                                    target="_blank"
+                                    className="link"
+                                    style={{ marginTop: '1rem', display: 'inline-flex' }}
+                                >
+                                    <Github size={14} /> View Project (GitHub)
+                                </a>
                             </ProjectCard>
                         </ProjectGrid>
                     </Section>
@@ -608,7 +641,7 @@ export default function ResumePage() {
                                         <span style={{ color: '#2563eb', fontWeight: 600 }}>
                                             GPA 4.2 / 4.5
                                         </span>
-                                        &nbsp;· 최우등 졸업 (Summa Cum Laude) · 1년 조기 졸업 (예정)
+                                        &nbsp;· 최우등 졸업 (Summa Cum Laude) · 1년 조기 졸업 (확정)
                                     </p>
                                     <ul className="details">
                                         <li>
