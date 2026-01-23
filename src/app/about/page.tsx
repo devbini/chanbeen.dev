@@ -175,7 +175,7 @@ export default function ResumePage() {
                             <a href="https://linkedin.com/in/devbini" target="_blank">
                                 <Linkedin size={16} /> LinkedIn
                             </a>
-                            <a href="mailto:flqld86851@gmail.com">
+                            <a href="mailto:contact@chanbeen.com">
                                 <Mail size={16} /> Email
                             </a>
                         </div>
