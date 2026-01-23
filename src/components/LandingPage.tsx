@@ -275,7 +275,7 @@ export default function LandingPage({ posts }: { posts: Post[] }) {
                                     <div className="icon-circle blue">
                                         <Mail size={18} />
                                     </div>
-                                    <span>flqld86851@gmail.com</span>
+                                    <span>contact@chanbeen.com</span>
                                 </div>
                                 <div className="item">
                                     <div className="icon-circle green">
