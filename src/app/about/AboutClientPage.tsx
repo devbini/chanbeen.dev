@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css } from 'styled-components';
 import Image from 'next/image';
 import {
     Mail,
@@ -19,6 +19,8 @@ import {
     MessageSquare,
     Award,
     FileText,
+    Plus,
+    Minus,
 } from 'lucide-react';
 import { sendContactEmail } from '@/lib/email';
 
@@ -30,7 +32,7 @@ const TOC_ITEMS = [
     { id: 'experience', text: 'Work Experience', level: 2 },
     { id: 'contribution', text: 'Open Source', level: 2 },
     { id: 'paper', text: 'Paper', level: 2 },
-    { id: 'projects', text: 'Key Projects', level: 2 },
+    { id: 'projects', text: 'Side Projects & Collaborations', level: 2 },
     { id: 'skills', text: 'Technical Skills', level: 2 },
     { id: 'education', text: 'Education', level: 2 },
     { id: 'awards', text: 'Awards & Certs', level: 2 },
@@ -58,11 +60,53 @@ export default function AboutClientPage() {
     const [scrollProgress, setScrollProgress] = useState(0);
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
     const [isSending, setIsSending] = useState(false);
+    const [collapsedSections, setCollapsedSections] = useState({
+        contribution: false,
+        paper: false,
+        projects: false,
+        skills: false,
+        education: false,
+        awards: false,
+        others: false,
+    });
     const headingElementsRef = useRef<{ [key: string]: IntersectionObserverEntry }>({});
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const toggleSection = (
+        section:
+            | 'contribution'
+            | 'paper'
+            | 'projects'
+            | 'skills'
+            | 'education'
+            | 'awards'
+            | 'others',
+    ) => {
+        setCollapsedSections((prev) => ({
+            ...prev,
+            [section]: !prev[section],
+        }));
+    };
+
+    const handleSectionHeaderKeyDown = (
+        e: React.KeyboardEvent<HTMLDivElement>,
+        section:
+            | 'contribution'
+            | 'paper'
+            | 'projects'
+            | 'skills'
+            | 'education'
+            | 'awards'
+            | 'others',
+    ) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleSection(section);
+        }
     };
 
     useEffect(() => {
@@ -166,13 +210,14 @@ export default function AboutClientPage() {
                 <HeroContent>
                     <MetaInfo>
                         <span className="job-title">
-                            <Terminal size={14} /> Full Stack Developer (Cloud & DevOps Engineer)
+                            <Terminal size={14} /> Full-Stack Engineer | DevOps | Cloud
+                            Infrastructure
                         </span>
                         <div className="social-links">
                             <a href="https://github.com/devbini" target="_blank">
                                 <Github size={16} /> GitHub
                             </a>
-                            <a href="https://linkedin.com/in/devbini" target="_blank">
+                            <a href="https://www.linkedin.com/in/chanbeen" target="_blank">
                                 <Linkedin size={16} /> LinkedIn
                             </a>
                             <a href="mailto:contact@chanbeen.com">
@@ -184,10 +229,10 @@ export default function AboutClientPage() {
                         김찬빈 <span className="eng">Chanbeen Kim</span>
                     </HeroTitle>
                     <p className="hero-desc">
-                        &quot;도움이 되는 것에 보람을 느끼는 엔지니어&quot;
+                        서비스 구조를 이해하고, 코드와 인프라를 함께 개선해 온 엔지니어
                         <br />
-                        개인의 성장이 팀의 성장으로 확장되는 문화를 좋아하고, 도전을 멈추지
-                        않습니다.
+                        도움이 되는 서비스를 만들기 위해, 기능을 넘어 구조와 운영까지
+                        개선합니다.
                     </p>
                 </HeroContent>
             </HeroSection>
@@ -201,30 +246,24 @@ export default function AboutClientPage() {
                             <div className="text">
                                 <p className="headline">
                                     <strong>
-                                        &quot;기술로 비즈니스의 실질적인 가치를 만들어내는 엔지니어
-                                        김찬빈입니다.&quot;
+                                        코드와 인프라를 함께 보며 문제를 구조적으로 풀어온 엔지니어
+                                        김찬빈입니다.
                                     </strong>
                                 </p>
                                 <p>
-                                    지난 6년간 웹 개발 전반과 인프라를 아우르며{' '}
-                                    <strong>&apos;숲과 나무를 동시에 보는 시야&apos;</strong>를
-                                    갖췄습니다.
-                                    <br />
-                                    <strong>
-                                        500만 건 이상의 데이터 처리 최적화(40s→1s)
-                                    </strong>와{' '}
-                                    <strong>
-                                        온프레미스 운영, 클라우드 인프라 구축 및 마이그레이션
-                                    </strong>{' '}
-                                    경험 등을 바탕으로 비즈니스 문제를 기술적으로 해결하는 데
-                                    집중합니다.
+                                    기능 구현만으로 끝내지 않고, 성능 병목이 있으면 데이터 처리
+                                    구조를 다시 보고, 운영 비용과 배포 흐름이 비효율적이면 인프라와
+                                    자동화까지 함께 손봤습니다. 대표적으로{' '}
+                                    <Highlight>100만 건 처리 시간을 5분에서 10초로 단축</Highlight>
+                                    하며 제품 사용성을 실제로 개선한 경험이 있습니다.
                                 </p>
                                 <p>
-                                    기능 구현을 넘어 <strong>'왜'</strong>를 고민하며,{' '}
-                                    <strong>오픈소스 기여와 컨퍼런스 연사, 멘토링 활동</strong>으로
-                                    지식의 선순환을 바라고 있습니다. 이러한 경험을 바탕으로, 사내
-                                    DevOps 문화를 주도하며 팀 전체의 엔지니어링 역량을 높이는{' '}
-                                    <strong>'함께 성장하는 개발자'</strong>가 되고자 합니다.
+                                    실시간 처리, 웹 기반 협업 기능, 온프레미스 배포 자동화처럼 코드와
+                                    운영이 맞물리는 영역을 꾸준히 맡아왔고,{' '}
+                                    <Highlight>사람의 손이 덜 타는 자동화된 플랫폼</Highlight>을
+                                    만드는 일에 특히 관심이 있습니다. 지금은 그
+                                    경험을 바탕으로 코드, 데이터, 인프라를 함께 보는 DevOps·Cloud
+                                    엔지니어링으로 더 깊게 확장하고 있습니다.
                                 </p>
                             </div>
                             <div className="profile-img">
@@ -246,50 +285,52 @@ export default function AboutClientPage() {
                             <TimelineItem>
                                 <div className="date-col">
                                     <span className="period">2025.04 - Present</span>
-                                    <span className="duration">7 mos</span>
+                                    <span className="duration">1 yr</span>
                                 </div>
                                 <div className="content-col">
                                     <h3 className="company">(주)웨어밸리 (WareValley)</h3>
                                     <p className="role">
                                         기술연구소 시트러스팀 / 선임 연구원 (Full Stack)
                                     </p>
+                                    <p className="desc">
+                                        데이터베이스 보안 및 성능 관리 솔루션을 제공하는 B2B SaaS 기업
+                                    </p>
+                                    <p className="role">DevOps & Infra</p>
                                     <ul className="details">
                                         <li>
-                                            외부망 팀 개발 인프라(GitLab + Jenkins + ArgoCD) 구축 및
-                                            파이프라인 자동화.
+                                            <strong>
+                                                GitLab CI/CD, Jenkins, Docker, ArgoCD, k3s 기반
+                                                내부 개발 인프라 및 배포 자동화 환경 구축
+                                            </strong>
                                         </li>
                                         <li>
-                                            <strong>Django(Python)</strong> 시스템 React
-                                            마이그레이션 및 Spring Boot/Java 프로젝트 진행.
+                                            Ansible 기반 IaC 구성과 폐쇄망·외부망 조건을 고려한 배포
+                                            흐름 표준화
                                         </li>
                                         <li>
-                                            LLM 기반 AI Chat, Socket 실시간 채팅, yjs 기반 실시간
-                                            동시 편집 시스템 등 신기능 개발.
-                                        </li>
-                                        <li>
-                                            Socket & xterm.js & Guacamole 활용 Web-based
-                                            SSH/TELNET/RDP Terminal 기능 구현
+                                            반복 운영 작업 축소를 위한 서버 환경 일관성 정비 및 자동화
+                                            운영
                                         </li>
                                     </ul>
-                                </div>
-                            </TimelineItem>
-
-                            <TimelineItem>
-                                <div className="date-col">
-                                    <span className="period">2025.08 - 2026.02</span>
-                                    <span className="type">Freelance</span>
-                                </div>
-                                <div className="content-col">
-                                    <h3 className="company">Codeit (코드잇)</h3>
-                                    <p className="role">Full Stack Sprint 9기 Mentor</p>
+                                    <p className="role">Product Development</p>
                                     <ul className="details">
                                         <li>
-                                            부트캠프 수강생 대상 1:1 코드 리뷰 및 기술 멘토링 진행
-                                            (React, Express).
+                                            <strong>100만 건 처리 5분 → 10초</strong>,{' '}
+                                            <strong>Excel 파싱 10분 → 10~20초</strong> 성능 개선
                                         </li>
                                         <li>
-                                            취업 준비 주니어 개발자들의 기술적 문제 해결을 돕고,
-                                            모의면접 진행.
+                                            <strong>
+                                                Spring Boot 기반 엔터프라이즈 서버 개발, React
+                                                (TypeScript) 기반 제품 마이그레이션 및 기능 확장
+                                            </strong>
+                                        </li>
+                                        <li>
+                                            ag-Grid 기반 대규모 데이터 UI 설계, Redis·MSSQL 지원 추가,
+                                            VisualVM 기반 메모리 누수 확인 및 수정
+                                        </li>
+                                        <li>
+                                            웹 기반 SSH/TELNET/RDP 터미널, 실시간 채팅, 코웤 에디터 등
+                                            웹 기반 엔터프라이즈 기능 확장
                                         </li>
                                     </ul>
                                 </div>
@@ -303,20 +344,42 @@ export default function AboutClientPage() {
                                 <div className="content-col">
                                     <h3 className="company">(주)코아텍</h3>
                                     <p className="role">개발팀 / 주임 (Full Stack)</p>
+                                    <p className="role">Product Development</p>
                                     <ul className="details">
                                         <li>
-                                            기존 수동적인 개발 환경에 Git VCS를 최초로 도입하여 형상
-                                            관리 프로세스 정립.
+                                            <strong>
+                                                Spring Boot·Node.js API, React 대시보드, 시각화
+                                                화면을 연결한 풀스택 제품 개발
+                                            </strong>
                                         </li>
                                         <li>
-                                            Linux 온프레미스 서버 및 공공 데이터 활용 웹 프로그램
-                                            구축/운영 전담.
+                                            <strong>
+                                                스마트폴 CCTV의 RTSP 스트리밍을 웹에 전달·표출하기
+                                                위한 WebSocket·MQTT 기반 실시간 처리 시스템 구현
+                                            </strong>
                                         </li>
                                         <li>
-                                            Express + Socket 기반 MQTT 스트리밍 서버 구축 및 구독
-                                            시스템 구축.
+                                            Chart.js·Three.js 기반 시각화 모듈 개발, Spring
+                                            Security·JWT 기반 인증 로직 구현
                                         </li>
-                                        <li>MySQL 스키마 설계 및 대용량 쿼리 최적화 수행.</li>
+                                        <li>
+                                            MySQL 인덱스·파티셔닝 기반 대용량 조회 및 처리 성능 최적화
+                                        </li>
+                                    </ul>
+                                    <p className="role">DevOps & Infra</p>
+                                    <ul className="details">
+                                        <li>
+                                            <strong>
+                                                Jenkins·Docker 기반 온프레미스 배포 자동화 설계·운영
+                                            </strong>
+                                        </li>
+                                        <li>
+                                            사내 GitHub 도입 및 형상 관리 프로세스 정립
+                                        </li>
+                                        <li>
+                                            Linux 서버 운영, 데이터 수집형 웹 프로그램 구축, 제품 개발과
+                                            운영 연계
+                                        </li>
                                     </ul>
                                 </div>
                             </TimelineItem>
@@ -325,10 +388,32 @@ export default function AboutClientPage() {
 
                     {/* Open Source */}
                     <Section id="contribution">
-                        <SectionTitle>Open Source Contribution</SectionTitle>
-
-                        {/* ArgoCD */}
-                        <ProjectCard>
+                        <SectionHeader
+                            $clickable
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => toggleSection('contribution')}
+                            onKeyDown={(e) => handleSectionHeaderKeyDown(e, 'contribution')}
+                        >
+                            <SectionTitle>Open Source Contribution</SectionTitle>
+                            <SectionToggle
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleSection('contribution');
+                                }}
+                                aria-expanded={!collapsedSections.contribution}
+                                aria-controls="contribution-content"
+                            >
+                                {collapsedSections.contribution ? <Plus size={14} /> : <Minus size={14} />}
+                            </SectionToggle>
+                        </SectionHeader>
+                        <SectionContent
+                            id="contribution-content"
+                            $collapsed={collapsedSections.contribution}
+                        >
+                            {/* ArgoCD */}
+                            <ProjectCard>
                             <div className="card-header">
                                 <div>
                                     <h3>ArgoCD (Kubernetes GitOps)</h3>
@@ -412,12 +497,33 @@ export default function AboutClientPage() {
                                 <GitPullRequest size={14} /> View Merged PR
                             </a>
                         </ProjectCard>
+                        </SectionContent>
                     </Section>
 
                     {/* Paper */}
                     <Section id="paper">
-                        <SectionTitle>Paper</SectionTitle>
-                        <ProjectCard>
+                        <SectionHeader
+                            $clickable
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => toggleSection('paper')}
+                            onKeyDown={(e) => handleSectionHeaderKeyDown(e, 'paper')}
+                        >
+                            <SectionTitle>Paper</SectionTitle>
+                            <SectionToggle
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleSection('paper');
+                                }}
+                                aria-expanded={!collapsedSections.paper}
+                                aria-controls="paper-content"
+                            >
+                                {collapsedSections.paper ? <Plus size={14} /> : <Minus size={14} />}
+                            </SectionToggle>
+                        </SectionHeader>
+                        <SectionContent id="paper-content" $collapsed={collapsedSections.paper}>
+                            <ProjectCard>
                             <div className="card-header">
                                 <div>
                                     <h3>
@@ -447,38 +553,39 @@ export default function AboutClientPage() {
                                 <FileText size={14} /> View Paper (KCI)
                             </a>
                         </ProjectCard>
+                        </SectionContent>
                     </Section>
 
                     {/* Project */}
                     <Section id="projects">
-                        <SectionTitle>Key Projects</SectionTitle>
-                        <ProjectGrid>
-                            <ProjectCard>
-                                <div className="card-header">
-                                    <h3>SeSAC 강의 플랫폼</h3>
-                                    <Badge>Team Project</Badge>
-                                </div>
-                                <p className="role">Backend & DevOps</p>
-                                <div className="tech-stack-row">
-                                    <TechTag>Spring Boot</TechTag>
-                                    <TechTag>Kotlin</TechTag>
-                                    <TechTag>React</TechTag>
-                                    <TechTag>AWS</TechTag>
-                                </div>
-                                <ul className="details">
-                                    <li>Spring Boot(Kotlin) 기반 RESTful API 서버 구축</li>
-                                    <li>SSE 기반 실시간 알림 분산 서비스 FE & BE 구현.</li>
-                                    <li>AWS 인프라 설계 및 운영, Azure 마이그레이션 전담</li>
-                                    <li>MariaDB 기반 테이블 설계 및 JPA 구현</li>
-                                </ul>
-                            </ProjectCard>
-
+                        <SectionHeader
+                            $clickable
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => toggleSection('projects')}
+                            onKeyDown={(e) => handleSectionHeaderKeyDown(e, 'projects')}
+                        >
+                            <SectionTitle>Side Projects & Collaborations</SectionTitle>
+                            <SectionToggle
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleSection('projects');
+                                }}
+                                aria-expanded={!collapsedSections.projects}
+                                aria-controls="projects-content"
+                            >
+                                {collapsedSections.projects ? <Plus size={14} /> : <Minus size={14} />}
+                            </SectionToggle>
+                        </SectionHeader>
+                        <SectionContent id="projects-content" $collapsed={collapsedSections.projects}>
+                            <ProjectGrid>
                             <ProjectCard>
                                 <div className="card-header">
                                     <h3>영캠프 (축제 플랫폼)</h3>
                                     <Badge>Team Project</Badge>
                                 </div>
-                                <p className="role">Backend Lead & DevOps</p>
+                                <p className="role">Backend Lead / AWS & DevOps</p>
                                 <div className="tech-stack-row">
                                     <TechTag>Spring Boot</TechTag>
                                     <TechTag>JPA</TechTag>
@@ -486,42 +593,39 @@ export default function AboutClientPage() {
                                     <TechTag>Docker</TechTag>
                                 </div>
                                 <ul className="details">
-                                    <li>Spring Boot(Java) 기반 RESTful API 서버 구축</li>
                                     <li>
-                                        AWS WAF & CloudWatch 기반 실시간 모니터링 구축 및 DDoS 공격
-                                        차단 & 위협대응
+                                        <strong>일 20,000명 규모 트래픽 대응을 위한 AWS 로드밸런싱 설계</strong>
                                     </li>
-                                    <li>일 20,000 트래픽 처리를 위한 AWS 로드밸런싱 설계.</li>
-                                    <li>Jenkins & Docker 기반 무중단 배포 파이프라인 구축.</li>
+                                    <li>AWS WAF·CloudWatch 기반 실시간 모니터링 및 DDoS 차단 대응</li>
+                                    <li>Jenkins·Docker 기반 무중단 배포 파이프라인 구축</li>
+                                    <li>Spring Boot(Java) 기반 인증·로그인 백엔드 개발</li>
                                 </ul>
                             </ProjectCard>
 
                             <ProjectCard>
                                 <div className="card-header">
-                                    <h3>구내식당 메뉴 프리뷰</h3>
-                                    <Badge $variant="gray">Personal Project</Badge>
+                                    <h3>SeSAC 강의 플랫폼</h3>
+                                    <Badge>Team Project</Badge>
                                 </div>
-                                <p className="role">Solo Developer, Sales & Operation</p>
+                                <p className="role">Cloud & DevOps / Backend</p>
                                 <div className="tech-stack-row">
+                                    <TechTag>Spring Boot</TechTag>
+                                    <TechTag>Kotlin</TechTag>
                                     <TechTag>React</TechTag>
-                                    <TechTag>PWA</TechTag>
                                     <TechTag>AWS</TechTag>
                                     <TechTag>Azure</TechTag>
                                 </div>
                                 <ul className="details">
-                                    <li><strong>AWS에서 Azure로의 인프라 마이그레이션</strong> 전담 및 운영 비용 최적화 설계</li>
-                                    <li>서비스 기획부터 아키텍처 설계, 배포 및 운영 전 과정을 주도하여 <strong>DAU 50+</strong> 달성</li>
-                                    <li><strong>JWT 기반 인증 체계 및 CSRF 방어</strong> 로직 구현을 통한 사용자 보안성 강화</li>
-                                    <li><strong>PWA(Progressive Web App)</strong> 기술을 적용한 모바일 최적화 및 오프라인 대응 환경 구축</li>
+                                    <li>
+                                        <strong>
+                                            비용 효율화를 위한 AWS 인프라 설계·구축·운영 및 Azure App
+                                            Service 마이그레이션
+                                        </strong>
+                                    </li>
+                                    <li>Spring Boot(Kotlin) 기반 백엔드 기능 개발</li>
+                                    <li>SSE 기반 실시간 알림 기능 구현 및 알림 관련 프론트 코드 일부 참여</li>
+                                    <li>MariaDB 기반 테이블 설계 및 JPA 구현</li>
                                 </ul>
-                                <a
-                                    href="https://github.com/devbini/today-menu"
-                                    target="_blank"
-                                    className="link"
-                                    style={{ marginTop: '1rem', display: 'inline-flex' }}
-                                >
-                                    <Github size={14} /> View Project (GitHub)
-                                </a>
                             </ProjectCard>
 
                             <ProjectCard>
@@ -529,7 +633,7 @@ export default function AboutClientPage() {
                                     <h3>AI Code Review Bot</h3>
                                     <Badge $variant="gray">Personal Project</Badge>
                                 </div>
-                                <p className="role">Solo Developer & Maintainer</p>
+                                <p className="role">Solo Developer / Maintainer</p>
                                 <div className="tech-stack-row">
                                     <TechTag>Kotlin</TechTag>
                                     <TechTag>Ollama (LLM)</TechTag>
@@ -537,10 +641,12 @@ export default function AboutClientPage() {
                                     <TechTag>GitLab/SVN</TechTag>
                                 </div>
                                 <ul className="details">
-                                    <li><strong>Ollama(Local LLM)</strong>를 활용한 GitHub PR 자동 코드 리뷰 및 피드백 시스템 구축</li>
-                                    <li>보안을 고려한 폐쇄망용 사내 맞춤형 리뷰 봇 제안으로 <strong>사내 AI 활용 공모전 대상</strong> 수상</li>
-                                    <li><strong>Docker Hub 배포 및 패키징</strong>을 통한 설치 편의성 개선 및 GitHub Actions 연동 가이드 제작</li>
-                                    <li>코드 품질 향상 및 리뷰 시간 단축을 통한 엔지니어링 생산성 개선 프로세스 정립</li>
+                                    <li>
+                                        <strong>폐쇄망 환경을 고려한 사내 맞춤형 코드 리뷰 봇 제안으로 AI 활용 공모전 대상 수상</strong>
+                                    </li>
+                                    <li>인트라넷 환경에서 로컬 LLM을 통해 코드 리뷰를 받을 수 있는 GitLab·SVN 지원 자동 리뷰 시스템 1인 개발</li>
+                                    <li>문제 정의부터 구조 설계, 구현, 패키징까지 주도한 사내 맞춤형 개발 도구 제작</li>
+                                    <li>Docker Hub 배포·패키징 및 설치 가이드 정리로 도입 편의성 개선</li>
                                 </ul>
                                 <a
                                     href="https://github.com/devbini/git-svn-reviewbot"
@@ -551,13 +657,130 @@ export default function AboutClientPage() {
                                     <Github size={14} /> View Project (GitHub)
                                 </a>
                             </ProjectCard>
-                        </ProjectGrid>
+
+                            <ProjectCard>
+                                <div className="card-header">
+                                    <h3>AWS Cloud Clubs at DGU Website</h3>
+                                    <Badge $variant="gray">Personal Project</Badge>
+                                </div>
+                                <p className="role">Cloud & Fullstack</p>
+                                <div className="tech-stack-row">
+                                    <TechTag>Next.js</TechTag>
+                                    <TechTag>AWS Lambda</TechTag>
+                                    <TechTag>DynamoDB</TechTag>
+                                    <TechTag>CloudFront</TechTag>
+                                    <TechTag>Cloudflare</TechTag>
+                                </div>
+                                <ul className="details">
+                                    <li>
+                                        <strong>
+                                            운영 비용 0원에 가깝게 유지하는 것을 목표로 공식 사이트
+                                            아키텍처 설계·개발·배포
+                                        </strong>
+                                    </li>
+                                    <li>Next.js 기반 정적 웹 호스팅과 S3·CloudFront 구성으로 비용 효율과 캐싱 성능 확보</li>
+                                    <li>Lambda·DynamoDB 기반 지원 기능과 SES·SNS 알림 연동으로 서버리스 백엔드 구성</li>
+                                    <li>Cloudflare를 앞단에 두어 DNS 관리와 기본 WAF를 무료 영역에서 운영</li>
+                                    <li>CloudFront Function으로 정적 호스팅 SPA 라우팅 404 이슈 해결</li>
+                                </ul>
+                                <a
+                                    href="https://acc-dgu.com/"
+                                    target="_blank"
+                                    className="link"
+                                    style={{ marginTop: '1rem', display: 'inline-flex' }}
+                                >
+                                    <FileText size={14} /> View Website
+                                </a>
+                            </ProjectCard>
+
+                            <ProjectCard>
+                                <div className="card-header">
+                                    <h3>구내식당 메뉴 프리뷰</h3>
+                                    <Badge $variant="gray">Personal Project</Badge>
+                                </div>
+                                <p className="role">Solo Developer / Sales & Operation</p>
+                                <div className="tech-stack-row">
+                                    <TechTag>React</TechTag>
+                                    <TechTag>PWA</TechTag>
+                                    <TechTag>AWS</TechTag>
+                                    <TechTag>Azure</TechTag>
+                                </div>
+                                <ul className="details">
+                                    <li>
+                                        <strong>
+                                            서비스 기획부터 아키텍처 설계, 배포·운영까지 주도한 실서비스
+                                            운영 경험, 평일 기준 DAU 50+ 달성
+                                        </strong>
+                                    </li>
+                                    <li>AWS → Azure 인프라 마이그레이션 및 운영 비용 최적화 설계</li>
+                                    <li>JWT 기반 인증 체계 및 CSRF 방어 로직 구현</li>
+                                    <li>PWA 기반 모바일 최적화 및 오프라인 대응 환경 구축</li>
+                                    <li>제휴 식당 폐업이라는 외부 요인으로 2026.04.01부 서비스 운영 종료</li>
+                                </ul>
+                                <a
+                                    href="https://github.com/devbini/today-menu"
+                                    target="_blank"
+                                    className="link"
+                                    style={{ marginTop: '1rem', display: 'inline-flex' }}
+                                >
+                                    <Github size={14} /> View Project (GitHub)
+                                </a>
+                            </ProjectCard>
+                            </ProjectGrid>
+                        </SectionContent>
                     </Section>
 
                     {/* Skills */}
                     <Section id="skills">
-                        <SectionTitle>Technical Skills</SectionTitle>
-                        <SkillGrid>
+                        <SectionHeader
+                            $clickable
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => toggleSection('skills')}
+                            onKeyDown={(e) => handleSectionHeaderKeyDown(e, 'skills')}
+                        >
+                            <SectionTitle>Technical Skills</SectionTitle>
+                            <SectionToggle
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleSection('skills');
+                                }}
+                                aria-expanded={!collapsedSections.skills}
+                                aria-controls="skills-content"
+                            >
+                                {collapsedSections.skills ? <Plus size={14} /> : <Minus size={14} />}
+                            </SectionToggle>
+                        </SectionHeader>
+                        <SectionContent id="skills-content" $collapsed={collapsedSections.skills}>
+                            <SkillGrid>
+                            <SkillBox>
+                                <h4>
+                                    <Terminal size={14} /> DevOps & Infra
+                                </h4>
+                                <div className="tags">
+                                    {[
+                                        'AWS',
+                                        'Azure',
+                                        'Docker',
+                                        'Jenkins',
+                                        'Kubernetes',
+                                        'GitOps',
+                                        'ArgoCD',
+                                        'GitHub',
+                                        'Linux',
+                                        'k3s',
+                                        'GitLab',
+                                        'Prometheus',
+                                        'Grafana',
+                                        'k6',
+                                    ].map((s) => (
+                                        <SkillTag key={s} $highlight={MAIN_SKILLS.has(s)}>
+                                            {s}
+                                        </SkillTag>
+                                    ))}
+                                </div>
+                            </SkillBox>
                             <SkillBox>
                                 <h4>
                                     <Server size={14} /> Backend
@@ -571,40 +794,11 @@ export default function AboutClientPage() {
                                         'Node.js',
                                         'Express.js',
                                         'Python',
-                                        'GO',
+                                        'Go',
+                                        'WebSocket',
+                                        'MQTT',
+                                        'SSE',
                                     ].map((s) => (
-                                        <SkillTag key={s} $highlight={MAIN_SKILLS.has(s)}>
-                                            {s}
-                                        </SkillTag>
-                                    ))}
-                                </div>
-                            </SkillBox>
-                            <SkillBox>
-                                <h4>
-                                    <Terminal size={14} /> DevOps
-                                </h4>
-                                <div className="tags">
-                                    {[
-                                        'AWS',
-                                        'Azure',
-                                        'Docker',
-                                        'Jenkins',
-                                        'Kubernetes',
-                                        'ArgoCD',
-                                        'Linux',
-                                    ].map((s) => (
-                                        <SkillTag key={s} $highlight={MAIN_SKILLS.has(s)}>
-                                            {s}
-                                        </SkillTag>
-                                    ))}
-                                </div>
-                            </SkillBox>
-                            <SkillBox>
-                                <h4>
-                                    <Database size={14} /> Database
-                                </h4>
-                                <div className="tags">
-                                    {['MySQL', 'PostgreSQL', 'Redis', 'MSSQL'].map((s) => (
                                         <SkillTag key={s} $highlight={MAIN_SKILLS.has(s)}>
                                             {s}
                                         </SkillTag>
@@ -616,20 +810,53 @@ export default function AboutClientPage() {
                                     <Code2 size={14} /> Frontend
                                 </h4>
                                 <div className="tags">
-                                    {['React', 'Next.js', 'TypeScript', 'HTML/CSS'].map((s) => (
+                                    {['React', 'Next.js', 'TypeScript', 'HTML/CSS', 'Chart.js', 'Three.js'].map((s) => (
                                         <SkillTag key={s} $highlight={MAIN_SKILLS.has(s)}>
                                             {s}
                                         </SkillTag>
                                     ))}
                                 </div>
                             </SkillBox>
-                        </SkillGrid>
+                            <SkillBox>
+                                <h4>
+                                    <Database size={14} /> Database
+                                </h4>
+                                <div className="tags">
+                                    {['MySQL', 'PostgreSQL', 'Redis', 'MSSQL', 'MariaDB'].map((s) => (
+                                        <SkillTag key={s} $highlight={MAIN_SKILLS.has(s)}>
+                                            {s}
+                                        </SkillTag>
+                                    ))}
+                                </div>
+                            </SkillBox>
+                            </SkillGrid>
+                        </SectionContent>
                     </Section>
 
                     {/* Education */}
                     <Section id="education">
-                        <SectionTitle>Education</SectionTitle>
-                        <Timeline>
+                        <SectionHeader
+                            $clickable
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => toggleSection('education')}
+                            onKeyDown={(e) => handleSectionHeaderKeyDown(e, 'education')}
+                        >
+                            <SectionTitle>Education</SectionTitle>
+                            <SectionToggle
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleSection('education');
+                                }}
+                                aria-expanded={!collapsedSections.education}
+                                aria-controls="education-content"
+                            >
+                                {collapsedSections.education ? <Plus size={14} /> : <Minus size={14} />}
+                            </SectionToggle>
+                        </SectionHeader>
+                        <SectionContent id="education-content" $collapsed={collapsedSections.education}>
+                            <Timeline>
                             <TimelineItem>
                                 <div className="date-col">
                                     <span className="period">2023.03 - 2026.02</span>
@@ -641,16 +868,16 @@ export default function AboutClientPage() {
                                         <span style={{ color: '#2563eb', fontWeight: 600 }}>
                                             GPA 4.2 / 4.5
                                         </span>
-                                        &nbsp;· 최우등 졸업 (Summa Cum Laude) · 1년 조기 졸업 (확정)
+                                        &nbsp;· 최우등 졸업 · 1년 조기 졸업
                                     </p>
                                     <ul className="details">
                                         <li>
-                                            <strong>
-                                                AWS Cloud Clubs 1st Gen Core Team (DevRel)
-                                            </strong>{' '}
-                                            - 동국대학교 ACC 초기 코어 멤버로 활동하며 기술 공유
-                                            세션 운영.
+                                            <strong>AWS Cloud Clubs 1기 Core Team (DevRel)</strong>
                                         </li>
+                                        <li>
+                                            동국대학교 ACC 초기 코어 멤버, 기술 공유 세션 운영
+                                        </li>
+                                        <li>AWS Cloud Clubs at DGU 공식 사이트 기획·개발·배포</li>
                                     </ul>
                                 </div>
                             </TimelineItem>
@@ -664,19 +891,39 @@ export default function AboutClientPage() {
                                     <p className="role">디지털 네트워크과</p>
                                     <ul className="details">
                                         <li>
-                                            <strong>보안 동아리 활동</strong> - 웹 해킹 파트를
-                                            담당하며 기본적인 코딩지식 및 해커톤 참여
+                                            보안 동아리 활동, 웹 해킹 파트 및 해커톤 참여
                                         </li>
                                     </ul>
                                 </div>
                             </TimelineItem>
-                        </Timeline>
+                            </Timeline>
+                        </SectionContent>
                     </Section>
 
                     {/* Awards & Certs */}
                     <Section id="awards">
-                        <SectionTitle>Awards & Certifications</SectionTitle>
-                        <ListContainer>
+                        <SectionHeader
+                            $clickable
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => toggleSection('awards')}
+                            onKeyDown={(e) => handleSectionHeaderKeyDown(e, 'awards')}
+                        >
+                            <SectionTitle>Awards & Certs</SectionTitle>
+                            <SectionToggle
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleSection('awards');
+                                }}
+                                aria-expanded={!collapsedSections.awards}
+                                aria-controls="awards-content"
+                            >
+                                {collapsedSections.awards ? <Plus size={14} /> : <Minus size={14} />}
+                            </SectionToggle>
+                        </SectionHeader>
+                        <SectionContent id="awards-content" $collapsed={collapsedSections.awards}>
+                            <ListContainer>
                             <ListItem>
                                 <div className="icon-col">
                                     <Trophy size={18} className="icon gold" />
@@ -702,6 +949,19 @@ export default function AboutClientPage() {
                                     </div>
                                     <div className="sub-text">
                                         논문: 소규모 클라우드 인스턴스 보안/성능 분석 (2025.11)
+                                    </div>
+                                </div>
+                            </ListItem>
+                            <ListItem>
+                                <div className="icon-col">
+                                    <Trophy size={18} className="icon silver" />
+                                </div>
+                                <div className="text-col">
+                                    <div className="main-text">
+                                        동국대학교 미래융합대학 <span className="highlight">최우등졸업상</span>
+                                    </div>
+                                    <div className="sub-text">
+                                        GPA 4.2 이상 졸업생 대상 수여 (2026.02)
                                     </div>
                                 </div>
                             </ListItem>
@@ -746,6 +1006,17 @@ export default function AboutClientPage() {
                             </ListItem>
                             <ListItem>
                                 <div className="icon-col">
+                                    <Award size={18} className="icon blue" />
+                                </div>
+                                <div className="text-col">
+                                    <div className="main-text">
+                                        AWS Certified Cloud Practitioner (CLF)
+                                    </div>
+                                    <div className="sub-text">Amazon Web Services (2024.09)</div>
+                                </div>
+                            </ListItem>
+                            <ListItem>
+                                <div className="icon-col">
                                     <Award size={18} className="icon gray" />
                                 </div>
                                 <div className="text-col">
@@ -761,10 +1032,9 @@ export default function AboutClientPage() {
                                 </div>
                                 <div className="text-col">
                                     <div className="main-text">
-                                        Application Development using Microservices and Serverless
-                                        (수료)
+                                        전자기능사 (Craftsman Electronics)
                                     </div>
-                                    <div className="sub-text">IBM (2025.01)</div>
+                                    <div className="sub-text">한국산업인력공단 (2020.09)</div>
                                 </div>
                             </ListItem>
                             <ListItem>
@@ -773,25 +1043,95 @@ export default function AboutClientPage() {
                                 </div>
                                 <div className="text-col">
                                     <div className="main-text">
-                                        AWS Certified Cloud Practitioner (CLF)
+                                        정보처리기능사 (Craftsman Information Processing)
                                     </div>
-                                    <div className="sub-text">Amazon Web Services (2024.09)</div>
+                                    <div className="sub-text">한국산업인력공단 (2019.06)</div>
                                 </div>
                             </ListItem>
-                        </ListContainer>
+                            <ListItem>
+                                <div className="icon-col">
+                                    <FileText size={18} className="icon gray" />
+                                </div>
+                                <div className="text-col">
+                                    <div className="main-text">
+                                        Application Development using Microservices and Serverless
+                                        (수료)
+                                    </div>
+                                    <div className="sub-text">IBM (2025.01)</div>
+                                </div>
+                            </ListItem>
+                            </ListContainer>
+                        </SectionContent>
                     </Section>
 
                     {/* Others */}
                     <Section id="others">
-                        <SectionTitle>Others</SectionTitle>
-                        <ListContainer>
+                        <SectionHeader
+                            $clickable
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => toggleSection('others')}
+                            onKeyDown={(e) => handleSectionHeaderKeyDown(e, 'others')}
+                        >
+                            <SectionTitle>Others</SectionTitle>
+                            <SectionToggle
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleSection('others');
+                                }}
+                                aria-expanded={!collapsedSections.others}
+                                aria-controls="others-content"
+                            >
+                                {collapsedSections.others ? <Plus size={14} /> : <Minus size={14} />}
+                            </SectionToggle>
+                        </SectionHeader>
+                        <SectionContent id="others-content" $collapsed={collapsedSections.others}>
+                            <ListContainer>
+                            <SubsectionTitle>Speaking</SubsectionTitle>
                             <ListItem>
                                 <div className="text-col">
-                                    <div className="main-text">"유명한 기술이 정답인가?"</div>
+                                    <div className="main-text">&quot;유명한 기술이 정답인가?&quot;</div>
                                     <div className="sub-text">TEO Conf 연사 (2025.12)</div>
                                 </div>
                             </ListItem>
-                        </ListContainer>
+                            <ListItem>
+                                <div className="text-col">
+                                    <div className="main-text">
+                                        &quot;Kubernetes 무중단 배포 실습 특강&quot;
+                                    </div>
+                                    <div className="sub-text">
+                                        메타코드 현직자 특강 (2026.03)
+                                    </div>
+                                </div>
+                            </ListItem>
+                            <SubsectionTitle>Additional Experience</SubsectionTitle>
+                            <ListItem>
+                                <div className="text-col">
+                                    <div className="main-text">C++ IoT 미들웨어 개발</div>
+                                    <div className="sub-text">
+                                        센서 연동과 데이터 처리 파이프라인 구현 경험
+                                    </div>
+                                </div>
+                            </ListItem>
+                            <ListItem>
+                                <div className="text-col">
+                                    <div className="main-text">Unity / Unreal / Photon</div>
+                                    <div className="sub-text">
+                                        모바일 게임, VR/AR, 멀티플레이 기능 개발 경험
+                                    </div>
+                                </div>
+                            </ListItem>
+                            <ListItem>
+                                <div className="text-col">
+                                    <div className="main-text">YouTube 채널 운영</div>
+                                    <div className="sub-text">
+                                        기획, 촬영, After Effects 편집, Photoshop 기반 업로드 운영까지 전 과정 수행
+                                    </div>
+                                </div>
+                            </ListItem>
+                            </ListContainer>
+                        </SectionContent>
                     </Section>
                 </ResumeContent>
 
@@ -1018,7 +1358,7 @@ const ContentGrid = styled.div`
 const ResumeContent = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 4rem;
+    gap: 1rem;
     min-width: 0;
 `;
 
@@ -1213,7 +1553,57 @@ const SectionTitle = styled.h2`
     color: #0f172a;
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
+    margin-top: 0;
+`;
+
+const SectionHeader = styled.div<{ $clickable?: boolean }>`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
     border-bottom: 1px solid #e2e8f0;
+    cursor: ${(props) => (props.$clickable ? 'pointer' : 'default')};
+
+    ${SectionTitle} {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    &:focus-visible {
+        outline: ${(props) => (props.$clickable ? '2px solid #bfdbfe' : 'none')};
+        outline-offset: 6px;
+        border-radius: 0.25rem;
+    }
+`;
+
+const SectionToggle = styled.button`
+    border: 1px solid #dbe3ee;
+    background: #ffffff;
+    color: #64748b;
+    border-radius: 999px;
+    width: 2rem;
+    height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+
+    &:hover {
+        color: #1e293b;
+        border-color: #cbd5e1;
+        background: #f8fafc;
+    }
+`;
+
+const SectionContent = styled.div<{ $collapsed: boolean }>`
+    overflow: hidden;
+    max-height: ${(props) => (props.$collapsed ? '0' : '2400px')};
+    opacity: ${(props) => (props.$collapsed ? 0 : 1)};
+    transition: max-height 0.32s ease, opacity 0.22s ease;
 `;
 
 const IntroBox = styled.div`
@@ -1349,6 +1739,15 @@ const ListContainer = styled.div`
     gap: 1rem;
 `;
 
+const SubsectionTitle = styled.h3`
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 0.5rem;
+`;
+
 const ListItem = styled.div`
     display: flex;
     gap: 1rem;
@@ -1396,10 +1795,15 @@ const Divider = styled.div`
     margin: 1rem 0;
 `;
 
-const ProjectCard = styled.div`
-    background: #f8fafc;
-    border: 1px solid #f1f5f9;
+const CardSurface = css`
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    border: 1px solid #e2e8f0;
     border-radius: 1rem;
+    box-shadow: 0 14px 30px -24px rgba(15, 23, 42, 0.28);
+`;
+
+const ProjectCard = styled.div`
+    ${CardSurface};
     padding: 1.5rem;
     margin-bottom: 1.5rem;
 
@@ -1460,15 +1864,11 @@ const ProjectGrid = styled.div`
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
-    @media (min-width: 768px) {
-        grid-template-columns: 1fr 1fr;
-    }
 
     ${ProjectCard} {
         margin-bottom: 0;
-        background: white;
-        border-color: #e2e8f0;
     }
+
     .details {
         list-style: none;
         font-size: 0.85rem;
@@ -1513,18 +1913,21 @@ const Badge = styled.span<{ $variant?: string }>`
 const SkillGrid = styled.div`
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 1rem;
     @media (min-width: 768px) {
         grid-template-columns: 1fr 1fr;
     }
 `;
 
 const SkillBox = styled.div`
+    ${CardSurface};
+    padding: 0.875rem 1rem;
+
     h4 {
         font-size: 0.9rem;
         font-weight: 700;
         color: #64748b;
-        margin-bottom: 0.8rem;
+        margin-bottom: 0.65rem;
         display: flex;
         align-items: center;
         gap: 0.4rem;
@@ -1533,13 +1936,13 @@ const SkillBox = styled.div`
     .tags {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.4rem;
+        gap: 0.3rem;
     }
 `;
 
 const SkillTag = styled.span<{ $highlight?: boolean }>`
     font-size: 0.8rem;
-    padding: 0.3rem 0.6rem;
+    padding: 0.24rem 0.5rem;
     border-radius: 0.4rem;
     ${(props) =>
     props.$highlight
