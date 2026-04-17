@@ -25,7 +25,8 @@ import {
 import { sendContactEmail } from '@/lib/email';
 
 const PROFILE_IMAGE_URL = (process.env.NEXT_PUBLIC_IMAGE_BASE_URL || '') + '/resume_profile.jpg';
-const RESUME_FILE_URL = (process.env.NEXT_PUBLIC_IMAGE_BASE_URL || '') + '/KimChanbeen_Resume.pdf';
+const RESUME_FILE_URL =
+    'https://drive.google.com/drive/folders/1ChbyHI3IdSSAuHq2r4VVI4KchmXO0urN?usp=sharing';
 
 const TOC_ITEMS = [
     { id: 'profile', text: 'Intro', level: 2 },
@@ -121,27 +122,6 @@ export default function AboutClientPage() {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
-
-    const handleDownloadResume = async () => {
-        try {
-            const response = await fetch(RESUME_FILE_URL);
-
-            if (!response.ok) throw new Error('Download failed');
-
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'KimChanbeen_Resume.pdf';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url);
-        } catch (e) {
-            console.error(e);
-            window.open(RESUME_FILE_URL, '_blank');
-        }
-    };
 
     useEffect(() => {
         const callback = (entries: IntersectionObserverEntry[]) => {
@@ -1281,7 +1261,7 @@ export default function AboutClientPage() {
                             </TocList>
                         </TocBox>
 
-                        <DownloadBtn onClick={handleDownloadResume}>
+                        <DownloadBtn href={RESUME_FILE_URL} target="_blank" rel="noreferrer">
                             <Download size={16} /> Download Resume
                         </DownloadBtn>
 
@@ -1551,7 +1531,7 @@ const TocItem = styled.li<{ $active: boolean; $level: number }>`
     }
 `;
 
-const DownloadBtn = styled.button`
+const DownloadBtn = styled.a`
     display: flex;
     align-items: center;
     justify-content: center;
