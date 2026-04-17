@@ -826,6 +826,8 @@ export default function AboutClientPage() {
                                             'Kubernetes',
                                             'GitOps',
                                             'ArgoCD',
+                                            'Terraform',
+                                            'Ansible',
                                             'GitHub',
                                             'Linux',
                                             'k3s',
