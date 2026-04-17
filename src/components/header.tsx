@@ -50,7 +50,7 @@ export default function Header() {
                     <Link href="https://github.com/devbini" target="_blank">
                         <Github size={18} />
                     </Link>
-                    <Link href="https://linkedin.com/in/devbini" target="_blank">
+                    <Link href="https://linkedin.com/in/chanbeen" target="_blank">
                         <Linkedin size={18} />
                     </Link>
                 </SocialLinks>
