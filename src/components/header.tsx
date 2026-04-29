@@ -3,7 +3,7 @@
 import styled from 'styled-components';
 import Link from 'next/link';
 import { FaReact, FaCloud, FaCoffee, FaPenNib } from 'react-icons/fa';
-import { Github, Linkedin, ChevronDown, Terminal } from 'lucide-react';
+import { Github, Linkedin, ChevronDown, Terminal, Camera } from 'lucide-react';
 
 export default function Header() {
     return (
@@ -52,6 +52,9 @@ export default function Header() {
                     </Link>
                     <Link href="https://linkedin.com/in/chanbeen" target="_blank">
                         <Linkedin size={18} />
+                    </Link>
+                    <Link href="/photo" aria-label="Photo archive">
+                        <Camera size={18} />
                     </Link>
                 </SocialLinks>
             </NavContainer>
@@ -113,6 +116,9 @@ const NavItem = styled(Link)`
     font-weight: 700;
     color: #475569;
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
     transition: color 0.2s;
     &:hover {
         color: #0f172a;
@@ -235,6 +241,9 @@ const SocialLinks = styled.div`
         /* LinkedIn Specific */
         &:nth-child(2):hover {
             color: #1d4ed8;
+        }
+        &:nth-child(3):hover {
+            color: #0f172a;
         }
     }
 `;
