@@ -13,7 +13,7 @@
         color 220ms ease;
 }
 
-.gallery[data-gallery-theme='dark'] {
+:global(html.dark) .gallery {
     --gallery-bg: #111211;
     --gallery-fg: #ecece5;
     --gallery-muted: #a2a39a;
@@ -67,35 +67,6 @@
     font-size: 13px;
     line-height: 1.8;
     word-break: keep-all;
-}
-
-.themeSwitch {
-    display: flex;
-    flex-shrink: 0;
-    gap: 3px;
-    padding: 4px;
-    border: 1px solid var(--gallery-line);
-    border-radius: 999px;
-}
-
-.themeSwitch button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    min-height: 36px;
-    padding: 0 13px;
-    border-radius: 999px;
-    color: var(--gallery-muted);
-    font-size: 11px;
-    transition:
-        color 180ms ease,
-        background-color 180ms ease;
-}
-
-.themeSwitch button[aria-pressed='true'] {
-    background: var(--gallery-fg);
-    color: var(--gallery-bg);
 }
 
 .toolbar {
@@ -350,31 +321,6 @@
 .gallery button:focus-visible {
     outline: 2px solid var(--gallery-fg);
     outline-offset: 3px;
-}
-
-:global(body):has(.gallery[data-gallery-theme='dark']) :global(header) {
-    border-bottom-color: #353630;
-    background-color: rgb(17 18 17 / 90%);
-    color: #ecece5;
-}
-
-:global(body):has(.gallery[data-gallery-theme='dark']) :global(header a),
-:global(body):has(.gallery[data-gallery-theme='dark']) :global(header .trigger) {
-    color: #ecece5;
-}
-
-:global(body):has(.gallery[data-gallery-theme='dark']) :global(header .trigger + div a) {
-    color: #475569;
-}
-
-:global(body):has(.gallery[data-gallery-theme='dark']) :global(footer) {
-    border-top-color: #353630;
-    background-color: #111211;
-    color: #a2a39a;
-}
-
-:global(body):has(.gallery[data-gallery-theme='dark']) :global(footer a:hover) {
-    color: #ecece5;
 }
 
 @keyframes breathe {

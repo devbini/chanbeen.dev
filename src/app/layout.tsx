@@ -2,9 +2,12 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/header';
+import ThemeToggle from '@/components/theme-toggle';
+import { ThemeProvider } from '@/components/theme-provider';
+import { themeInitScript } from '@/lib/theme-script';
 import Footer from '@/components/footer';
 import StyledComponentsRegistry from '@/lib/registry';
-import Script from "next/script";
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'] });
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
@@ -46,31 +49,36 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="ko">
+        <html lang="ko" suppressHydrationWarning>
+            <head>
+                <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+            </head>
             <body className={`${inter.className} antialiased`}>
-            {GA_ID && (
-                <>
-                    <Script
-                        src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-                        strategy="afterInteractive"
-                    />
-                    <Script id="google-analytics" strategy="afterInteractive">
-                        {`
+                {GA_ID && (
+                    <>
+                        <Script
+                            src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+                            strategy="afterInteractive"
+                        />
+                        <Script id="google-analytics" strategy="afterInteractive">
+                            {`
                                 window.dataLayer = window.dataLayer || [];
                                 function gtag(){dataLayer.push(arguments);}
                                 gtag('js', new Date());
 
                                 gtag('config', '${GA_ID}');
                             `}
-                    </Script>
-                </>
-            )}
+                        </Script>
+                    </>
+                )}
 
-
-            <StyledComponentsRegistry>
-                    <Header />
-                    {children}
-                    <Footer />
+                <StyledComponentsRegistry>
+                    <ThemeProvider>
+                        <Header />
+                        {children}
+                        <Footer />
+                        <ThemeToggle />
+                    </ThemeProvider>
                 </StyledComponentsRegistry>
             </body>
         </html>

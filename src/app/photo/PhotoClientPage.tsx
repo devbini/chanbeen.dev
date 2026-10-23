@@ -3,7 +3,7 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowUpRight, ChevronLeft, ChevronRight, Moon, Sun, X } from 'lucide-react';
+import { ArrowUpRight, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import styles from './photo.module.css';
 import { getPhotoTopics, PHOTO_TOPICS } from './photo-topics';
 import type { PhotoTopic } from './photo-topics';
@@ -66,7 +66,6 @@ export default function PhotoClientPage() {
     const [renderCount, setRenderCount] = useState(INITIAL_RENDER_COUNT);
     const [columnCount, setColumnCount] = useState(2);
     const [loadAttempt, setLoadAttempt] = useState(0);
-    const [galleryTheme, setGalleryTheme] = useState<'light' | 'dark'>('light');
     const loadMoreRef = useRef<HTMLDivElement>(null);
     const detailRef = useRef<HTMLDialogElement>(null);
     const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -104,24 +103,6 @@ export default function PhotoClientPage() {
         });
         return columns;
     }, [visiblePhotos, renderCount, columnCount]);
-
-    useEffect(() => {
-        try {
-            const savedTheme = window.localStorage.getItem('photo-gallery-theme');
-            if (savedTheme === 'light' || savedTheme === 'dark') setGalleryTheme(savedTheme);
-        } catch {
-            // The gallery remains usable when browser storage is unavailable.
-        }
-    }, []);
-
-    const changeTheme = (theme: 'light' | 'dark') => {
-        setGalleryTheme(theme);
-        try {
-            window.localStorage.setItem('photo-gallery-theme', theme);
-        } catch {
-            // Theme switching does not depend on browser storage.
-        }
-    };
 
     useEffect(() => {
         const controller = new AbortController();
@@ -264,7 +245,6 @@ export default function PhotoClientPage() {
     return (
         <main
             className={styles.gallery}
-            data-gallery-theme={galleryTheme}
             style={
                 {
                     '--display-font': '"Cormorant Garamond", Georgia, "Times New Roman", serif',
@@ -289,28 +269,6 @@ export default function PhotoClientPage() {
                             <p className={styles.description}>
                                 지나온 계절, 오래 남기고 싶은 장면들.
                             </p>
-                        </div>
-                        <div
-                            className={styles.themeSwitch}
-                            role="group"
-                            aria-label="Gallery background"
-                        >
-                            <button
-                                type="button"
-                                aria-label="Light background"
-                                aria-pressed={galleryTheme === 'light'}
-                                onClick={() => changeTheme('light')}
-                            >
-                                <Sun size={15} /> Light
-                            </button>
-                            <button
-                                type="button"
-                                aria-label="Dark background"
-                                aria-pressed={galleryTheme === 'dark'}
-                                onClick={() => changeTheme('dark')}
-                            >
-                                <Moon size={15} /> Dark
-                            </button>
                         </div>
                     </div>
                     <div className={styles.toolbar}>
