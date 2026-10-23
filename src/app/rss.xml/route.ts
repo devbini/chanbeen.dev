@@ -34,8 +34,8 @@ export async function GET() {
         feed.item({
             title: post.title,
             description: post.excerpt,
-            url: `${siteUrl}/posts/${post.id}`,
-            guid: `${siteUrl}/posts/${post.id}`,
+            url: `${siteUrl}/blog/${post.id}`,
+            guid: `${siteUrl}/blog/${post.id}`,
             date: post.date,
         });
     });
