@@ -4,7 +4,6 @@ export const PHOTO_TOPICS = [
     { id: 'landscape', label: '풍경' },
     { id: 'flowers', label: '꽃' },
     { id: 'travel', label: '해외여행' },
-    { id: 'portrait', label: '인물' },
 ] as const;
 
 export type PhotoTopic = (typeof PHOTO_TOPICS)[number]['id'];
