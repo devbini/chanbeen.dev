@@ -69,9 +69,9 @@ const HeaderWrapper = styled.header`
     left: 0;
     right: 0;
     z-index: 50;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: var(--header-bg);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+    border-bottom: 1px solid var(--header-border);
 `;
 
 const NavContainer = styled.div`
@@ -82,6 +82,9 @@ const NavContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    @media (max-width: 480px) {
+        padding: 0 1rem;
+    }
 `;
 
 const LogoLink = styled(Link)`
@@ -91,11 +94,11 @@ const LogoLink = styled(Link)`
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #0f172a;
+    color: var(--palette-0f172a);
     text-decoration: none;
 
     .icon {
-        color: #2563eb;
+        color: var(--palette-2563eb);
     }
     &:hover {
         opacity: 0.7;
@@ -114,14 +117,14 @@ const NavMenu = styled.nav`
 const NavItem = styled(Link)`
     font-size: 0.875rem;
     font-weight: 700;
-    color: #475569;
+    color: var(--palette-475569);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
     transition: color 0.2s;
     &:hover {
-        color: #0f172a;
+        color: var(--palette-0f172a);
     }
 `;
 
@@ -138,12 +141,12 @@ const DropdownWrapper = styled.div`
         gap: 0.25rem;
         font-size: 0.875rem;
         font-weight: 700;
-        color: #475569;
+        color: var(--palette-475569);
         transition: color 0.2s;
     }
 
     &:hover .trigger {
-        color: #0f172a;
+        color: var(--palette-0f172a);
     }
     &:hover > div {
         /* Show Content */
@@ -167,8 +170,8 @@ const DropdownContent = styled.div`
 `;
 
 const DropdownBox = styled.div`
-    background: white;
-    border: 1px solid #e2e8f0;
+    background: var(--palette-ffffff);
+    border: 1px solid var(--palette-e2e8f0);
     border-radius: 0.75rem;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     overflow: hidden;
@@ -178,14 +181,14 @@ const DropdownBox = styled.div`
         padding: 0.5rem 0.75rem;
         font-size: 0.625rem;
         font-weight: 700;
-        color: #94a3b8;
+        color: var(--palette-94a3b8);
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
 
     .divider {
         height: 1px;
-        background-color: #f1f5f9;
+        background-color: var(--palette-f1f5f9);
         margin: 0.25rem 0;
     }
 `;
@@ -198,7 +201,7 @@ const DropdownItem = styled(Link)`
     border-radius: 0.5rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #475569;
+    color: var(--palette-475569);
     text-decoration: none;
     transition: background 0.2s;
 
@@ -206,21 +209,21 @@ const DropdownItem = styled(Link)`
         font-size: 1rem;
     }
     .icon.sky {
-        color: #0ea5e9;
+        color: var(--palette-0ea5e9);
     }
     .icon.amber {
-        color: #b45309;
+        color: var(--palette-b45309);
     }
     .icon.blue {
-        color: #3b82f6;
+        color: var(--palette-3b82f6);
     }
     .icon.slate {
-        color: #94a3b8;
+        color: var(--palette-94a3b8);
     }
 
     &:hover {
-        background-color: #f8fafc;
-        color: #2563eb;
+        background-color: var(--palette-f8fafc);
+        color: var(--palette-2563eb);
     }
 `;
 
@@ -229,21 +232,25 @@ const SocialLinks = styled.div`
     gap: 1rem;
     align-items: center;
     padding-left: 2rem;
-    border-left: 1px solid #e2e8f0;
+    border-left: 1px solid var(--palette-e2e8f0);
     height: 1.5rem;
+    @media (max-width: 480px) {
+        gap: 0.65rem;
+        padding-left: 0.75rem;
+    }
 
     a {
-        color: #94a3b8;
+        color: var(--palette-94a3b8);
         transition: color 0.2s;
         &:hover {
-            color: #0f172a;
+            color: var(--palette-0f172a);
         }
         /* LinkedIn Specific */
         &:nth-child(2):hover {
-            color: #1d4ed8;
+            color: var(--palette-1d4ed8);
         }
         &:nth-child(3):hover {
-            color: #0f172a;
+            color: var(--palette-0f172a);
         }
     }
 `;

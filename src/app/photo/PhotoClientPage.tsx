@@ -1,9 +1,12 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Compass, Star, X } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { ArrowUpRight, ChevronLeft, ChevronRight, Maximize, Minimize, X } from 'lucide-react';
+import styles from './photo.module.css';
+import { getPhotoTopics, PHOTO_TOPICS } from './photo-topics';
+import type { PhotoTopic } from './photo-topics';
 
 type PhotoTheme = 'midnight' | 'cloud';
 
@@ -26,6 +29,7 @@ type PhotoItem = {
     src?: string;
     thumbnailSrc?: string;
     alt?: string;
+    topics: PhotoTopic[];
 };
 
 const INITIAL_RENDER_COUNT = 20;
@@ -52,120 +56,233 @@ const getAspectRatioStyle = (photo: PhotoItem) => {
 };
 
 export default function PhotoClientPage() {
+    const reduceMotion = useReducedMotion();
     const [photos, setPhotos] = useState<PhotoItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [loadError, setLoadError] = useState<string | null>(null);
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
     const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
     const [activeFilter, setActiveFilter] = useState<string>('ALL');
+    const [activeTopic, setActiveTopic] = useState<PhotoTopic | 'ALL'>('ALL');
     const [renderCount, setRenderCount] = useState(INITIAL_RENDER_COUNT);
-    const [layoutRevision, setLayoutRevision] = useState(0);
-    const relayoutFrameRef = useRef<number | null>(null);
+    const [columnCount, setColumnCount] = useState(2);
+    const [loadAttempt, setLoadAttempt] = useState(0);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [fullscreenSupported, setFullscreenSupported] = useState(false);
+    const [fullscreenError, setFullscreenError] = useState<string | null>(null);
+    const fullscreenRef = useRef<HTMLDivElement>(null);
+    const loadMoreRef = useRef<HTMLDivElement>(null);
+    const detailRef = useRef<HTMLDialogElement>(null);
+    const closeButtonRef = useRef<HTMLButtonElement>(null);
     const imageBaseUrl = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || '';
-    const selectedPhoto = selectedIndex === null ? null : photos[selectedIndex];
-    const years = Array.from(new Set(photos.map((photo) => photo.takenAt.slice(0, 4)))).sort(
-        (a, b) => Number(b) - Number(a),
+    const years = useMemo(
+        () =>
+            Array.from(new Set(photos.map((photo) => photo.takenAt.slice(0, 4)))).sort(
+                (a, b) => Number(b) - Number(a),
+            ),
+        [photos],
     );
-    const visiblePhotos = photos.filter((photo) => {
-        if (activeFilter === 'ALL') return true;
-        return photo.takenAt.startsWith(activeFilter);
-    });
-    const renderedPhotos = visiblePhotos.slice(0, renderCount);
+    const visiblePhotos = useMemo(
+        () =>
+            photos.filter(
+                (photo) =>
+                    (activeFilter === 'ALL' || photo.takenAt.startsWith(activeFilter)) &&
+                    (activeTopic === 'ALL' || photo.topics.includes(activeTopic)),
+            ),
+        [photos, activeFilter, activeTopic],
+    );
+    const selectedPhoto = selectedIndex === null ? null : visiblePhotos[selectedIndex];
+    const isDetailOpen = !!selectedPhoto;
+    const hasMore = renderCount < visiblePhotos.length;
+    const photoColumns = useMemo(() => {
+        const columns: { photo: PhotoItem; index: number }[][] = Array.from(
+            { length: columnCount },
+            () => [],
+        );
+        const heights = Array<number>(columnCount).fill(0);
+        visiblePhotos.slice(0, renderCount).forEach((photo, index) => {
+            const shortestColumn = heights.indexOf(Math.min(...heights));
+            const [width, height] = photo.aspectRatio.split('/').map(Number);
+            columns[shortestColumn].push({ photo, index });
+            heights[shortestColumn] += height / width;
+        });
+        return columns;
+    }, [visiblePhotos, renderCount, columnCount]);
 
     useEffect(() => {
-        const photosJsonUrl = imageBaseUrl
-            ? `${imageBaseUrl}/photos/photos.json`
-            : '/photos/photos.json';
+        const controller = new AbortController();
+        const photosJsonUrl = imageBaseUrl ? '/api/photos' : '/photos/photos.json';
+        setIsLoading(true);
+        setLoadError(null);
 
         async function loadPhotos() {
             try {
-                const response = await fetch(photosJsonUrl, { cache: 'force-cache' });
+                const response = await fetch(photosJsonUrl, {
+                    cache: 'no-cache',
+                    signal: controller.signal,
+                });
                 if (!response.ok) {
                     throw new Error(`Failed to load photos.json: ${response.status}`);
                 }
 
-                const data = (await response.json()) as PhotoItem[];
-                setPhotos(data);
+                const data = (await response.json()) as Omit<PhotoItem, 'topics'>[];
+                if (!Array.isArray(data)) throw new Error('Invalid photo archive.');
+                if (controller.signal.aborted) return;
+                setPhotos(
+                    data
+                        .map((photo) => ({ ...photo, topics: getPhotoTopics(photo) }))
+                        .sort((a, b) => b.takenAt.localeCompare(a.takenAt)),
+                );
             } catch (error) {
+                if (controller.signal.aborted) return;
                 setLoadError(error instanceof Error ? error.message : 'Failed to load photos.');
             } finally {
-                setIsLoading(false);
+                if (!controller.signal.aborted) setIsLoading(false);
             }
         }
 
         void loadPhotos();
-    }, [imageBaseUrl]);
+        return () => controller.abort();
+    }, [imageBaseUrl, loadAttempt]);
 
     useEffect(() => {
-        setRenderCount(INITIAL_RENDER_COUNT);
-        setLayoutRevision((current) => current + 1);
-    }, [activeFilter]);
-
-    useEffect(() => {
-        if (renderCount >= visiblePhotos.length) return;
-
-        let timeoutId: ReturnType<typeof setTimeout> | undefined;
-        let animationFrameId: number | undefined;
-
-        timeoutId = setTimeout(() => {
-            animationFrameId = window.requestAnimationFrame(() => {
-                setRenderCount((current) =>
-                    Math.min(current + RENDER_BATCH_SIZE, visiblePhotos.length),
-                );
-            });
-        }, 120);
-
-        return () => {
-            if (timeoutId) clearTimeout(timeoutId);
-            if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
+        const queries = [640, 1280].map((width) => window.matchMedia(`(min-width: ${width}px)`));
+        const updateColumns = () => {
+            setColumnCount(2 + queries.filter((query) => query.matches).length);
         };
-    }, [renderCount, visiblePhotos.length]);
-
-    useEffect(() => {
-        return () => {
-            if (relayoutFrameRef.current !== null) {
-                window.cancelAnimationFrame(relayoutFrameRef.current);
-            }
-        };
+        updateColumns();
+        queries.forEach((query) => query.addEventListener('change', updateColumns));
+        return () => queries.forEach((query) => query.removeEventListener('change', updateColumns));
     }, []);
 
-    const scheduleGridRelayout = () => {
-        if (relayoutFrameRef.current !== null) return;
+    const loadMore = useCallback(() => {
+        setRenderCount((current) => Math.min(current + RENDER_BATCH_SIZE, visiblePhotos.length));
+    }, [visiblePhotos.length]);
 
-        relayoutFrameRef.current = window.requestAnimationFrame(() => {
-            relayoutFrameRef.current = null;
-            setLayoutRevision((current) => current + 1);
-        });
-    };
+    useEffect(() => {
+        const target = loadMoreRef.current;
+        if (!target || !hasMore || isDetailOpen || !('IntersectionObserver' in window)) return;
 
-    const getImageSrc = (photo: PhotoItem) => {
-        if (!photo.src) return null;
-        return buildImageUrl(imageBaseUrl, photo.src);
-    };
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    observer.disconnect();
+                    loadMore();
+                }
+            },
+            { rootMargin: '600px 0px' },
+        );
+        observer.observe(target);
+        return () => observer.disconnect();
+    }, [hasMore, isDetailOpen, loadMore, renderCount]);
 
-    const getThumbnailSrc = (photo: PhotoItem) => {
-        if (photo.thumbnailSrc) {
-            return buildImageUrl(imageBaseUrl, photo.thumbnailSrc);
+    useEffect(() => {
+        const dialog = detailRef.current;
+        if (!isDetailOpen || !dialog) return;
+
+        const previousFocus =
+            document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        const previousOverflow = document.body.style.overflow;
+        const previousPadding = document.body.style.paddingRight;
+        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+        const bodyPadding = parseFloat(window.getComputedStyle(document.body).paddingRight) || 0;
+        document.body.style.overflow = 'hidden';
+        if (scrollbarWidth > 0)
+            document.body.style.paddingRight = `${bodyPadding + scrollbarWidth}px`;
+        const fullscreenTarget = fullscreenRef.current;
+        setFullscreenError(null);
+        dialog.showModal();
+        closeButtonRef.current?.focus({ preventScroll: true });
+        return () => {
+            if (fullscreenTarget && document.fullscreenElement === fullscreenTarget) {
+                void document.exitFullscreen().catch(() => {});
+            }
+            dialog.close();
+            document.body.style.overflow = previousOverflow;
+            document.body.style.paddingRight = previousPadding;
+            previousFocus?.focus({ preventScroll: true });
+        };
+    }, [isDetailOpen]);
+
+    useEffect(() => {
+        setFullscreenSupported(Boolean(document.fullscreenEnabled));
+        const syncFullscreen = () => {
+            setIsFullscreen(
+                Boolean(
+                    fullscreenRef.current && document.fullscreenElement === fullscreenRef.current,
+                ),
+            );
+        };
+        document.addEventListener('fullscreenchange', syncFullscreen);
+        return () => document.removeEventListener('fullscreenchange', syncFullscreen);
+    }, []);
+
+    const toggleFullscreen = async () => {
+        const target = fullscreenRef.current;
+        if (!target) return;
+        setFullscreenError(null);
+        try {
+            if (document.fullscreenElement === target) {
+                await document.exitFullscreen();
+            } else {
+                await target.requestFullscreen();
+            }
+        } catch {
+            setFullscreenError('전체화면으로 전환하지 못했습니다. 다시 시도해 주세요.');
         }
-
-        if (!photo.src) return null;
-
-        const fileName = getFileNameFromSrc(photo.src);
-        if (!fileName) return buildImageUrl(imageBaseUrl, photo.src);
-        return buildImageUrl(imageBaseUrl, `/photos/thumbnails/${fileName}`);
     };
+
+    const changeFilter = (filter: string) => {
+        setActiveFilter(filter);
+        setRenderCount(INITIAL_RENDER_COUNT);
+        setSelectedIndex(null);
+    };
+
+    const changeTopic = (topic: PhotoTopic | 'ALL') => {
+        setActiveTopic(topic);
+        setRenderCount(INITIAL_RENDER_COUNT);
+        setSelectedIndex(null);
+    };
+
+    const getImageSrc = useCallback(
+        (photo: PhotoItem) => {
+            if (!photo.src) return null;
+            return buildImageUrl(imageBaseUrl, photo.src);
+        },
+        [imageBaseUrl],
+    );
+
+    const getThumbnailSrc = useCallback(
+        (photo: PhotoItem) => {
+            if (photo.thumbnailSrc) {
+                return buildImageUrl(imageBaseUrl, photo.thumbnailSrc);
+            }
+
+            if (!photo.src) return null;
+
+            const fileName = getFileNameFromSrc(photo.src);
+            if (!fileName) return buildImageUrl(imageBaseUrl, photo.src);
+            return buildImageUrl(imageBaseUrl, `/photos/thumbnails/${fileName}`);
+        },
+        [imageBaseUrl],
+    );
+
+    const openSelection = useCallback((index: number) => {
+        setSlideDirection(1);
+        setSelectedIndex(index);
+    }, []);
 
     const moveSelection = (direction: -1 | 1) => {
         setSlideDirection(direction);
         setSelectedIndex((current) => {
             if (current === null) return null;
-            return (current + direction + photos.length) % photos.length;
+            return (current + direction + visiblePhotos.length) % visiblePhotos.length;
         });
     };
 
     return (
         <main
-            className="min-h-screen bg-white text-[#202020]"
+            className={styles.gallery}
             style={
                 {
                     '--display-font': '"Cormorant Garamond", Georgia, "Times New Roman", serif',
@@ -174,91 +291,123 @@ export default function PhotoClientPage() {
                 } as CSSProperties
             }
         >
-            <section>
+            <section className={styles.archive} aria-label="Photo archive">
                 <motion.div
-                    className="px-6 pb-[60px] pt-24 md:px-20 md:pt-32"
+                    className={styles.intro}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
                 >
-                    <p
-                        className="mb-6 text-[10px] font-semibold uppercase tracking-[0.42em] text-[#7A7A7A]"
-                        style={{ fontFamily: 'var(--ui-font)' }}
-                    >
-                        Personal Landscape Archive
-                    </p>
-                    <h1
-                        className="max-w-5xl text-[64px] font-medium leading-[0.92] tracking-[-0.055em] md:text-[118px]"
-                        style={{ fontFamily: 'var(--display-font)' }}
-                    >
-                        Floating Gallery
-                        <br />
-                        of Quiet Horizons
-                    </h1>
-                    <p
-                        className="mt-8 max-w-[600px] break-keep text-[15px] font-light leading-[1.8] text-[#555555]"
-                        style={{ fontFamily: 'var(--ui-font)' }}
-                    >
-                        When the eye becomes a viewfinder, the world reveals its hidden serenity.
-                    </p>
-
-                    <FilterBar
-                        activeFilter={activeFilter}
-                        years={years}
-                        onChange={setActiveFilter}
-                    />
+                    <div className={styles.headingRow}>
+                        <div>
+                            <p className={styles.eyebrow}>CHANBEEN / PERSONAL PHOTO ARCHIVE</p>
+                            <h1 className={styles.title}>
+                                Quiet Horizons<span>.</span>
+                            </h1>
+                            <p className={styles.description}>
+                                지나온 계절, 오래 남기고 싶은 장면들.
+                            </p>
+                        </div>
+                    </div>
+                    <div className={styles.toolbar}>
+                        <TopicFilterBar activeTopic={activeTopic} onChange={changeTopic} />
+                        <div className={styles.filterControls}>
+                            <label className={styles.yearFilter}>
+                                연도
+                                <select
+                                    aria-label="Filter photos by year"
+                                    value={activeFilter}
+                                    onChange={(event) => changeFilter(event.target.value)}
+                                >
+                                    <option value="ALL">전체 연도</option>
+                                    {years.map((year) => (
+                                        <option key={year} value={year}>
+                                            {year}
+                                        </option>
+                                    ))}
+                                </select>
+                            </label>
+                            <p className={styles.photoCount} aria-live="polite" aria-atomic="true">
+                                {isLoading
+                                    ? 'Loading archive'
+                                    : `${visiblePhotos.length} photographs`}
+                            </p>
+                        </div>
+                    </div>
                 </motion.div>
 
                 {isLoading ? (
-                    <div className="grid min-h-[38vh] place-items-center px-6 text-center">
+                    <div className={styles.emptyState} role="status">
                         <p
-                            className="text-4xl font-medium tracking-[-0.04em] text-[#202020] md:text-6xl"
+                            className="text-3xl font-medium tracking-[-0.04em] md:text-5xl"
                             style={{ fontFamily: 'var(--display-font)' }}
                         >
                             Loading captured moments.
                         </p>
                     </div>
                 ) : loadError ? (
-                    <div className="grid min-h-[38vh] place-items-center px-6 text-center">
-                        <p
-                            className="text-sm text-[#666666]"
-                            style={{ fontFamily: 'var(--ui-font)' }}
-                        >
-                            {loadError}
-                        </p>
+                    <div className={styles.emptyState} role="alert">
+                        <div style={{ fontFamily: 'var(--ui-font)' }}>
+                            <p className="text-sm">Unable to load the photo archive.</p>
+                            <button
+                                type="button"
+                                onClick={() => setLoadAttempt((current) => current + 1)}
+                                className={`${styles.loadButton} mt-5`}
+                            >
+                                Try again
+                            </button>
+                        </div>
                     </div>
                 ) : visiblePhotos.length > 0 ? (
                     <motion.div
-                        className="columns-2 gap-px md:columns-3 lg:columns-4 2xl:columns-5"
-                        data-layout-revision={layoutRevision}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
                     >
-                        {renderedPhotos.map((photo, index) => {
-                            const originalIndex = photos.findIndex((item) => item.id === photo.id);
-                            return (
-                                <LandscapeCard
-                                    key={photo.id}
-                                    photo={photo}
-                                    thumbnailSrc={getThumbnailSrc(photo)}
-                                    originalSrc={getImageSrc(photo)}
-                                    eager={index < 10}
-                                    onImageLoad={scheduleGridRelayout}
-                                    onClick={() => setSelectedIndex(originalIndex)}
-                                />
-                            );
-                        })}
+                        <div
+                            className={styles.photoGrid}
+                            style={{
+                                gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
+                            }}
+                        >
+                            {photoColumns.map((column, columnIndex) => (
+                                <div key={columnIndex} className={styles.photoColumn}>
+                                    {column.map(({ photo, index }) => (
+                                        <LandscapeCard
+                                            key={photo.id}
+                                            photo={photo}
+                                            index={index}
+                                            thumbnailSrc={getThumbnailSrc(photo)}
+                                            originalSrc={getImageSrc(photo)}
+                                            eager={index < columnCount}
+                                            onSelect={openSelection}
+                                        />
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                        {hasMore && (
+                            <div ref={loadMoreRef} className="flex justify-center py-10">
+                                <button
+                                    type="button"
+                                    onClick={loadMore}
+                                    className={styles.loadButton}
+                                    style={{ fontFamily: 'var(--ui-font)' }}
+                                >
+                                    Load more photos
+                                </button>
+                            </div>
+                        )}
                     </motion.div>
                 ) : (
                     <motion.div
-                        className="grid min-h-[38vh] place-items-center px-6 text-center"
+                        className={styles.emptyState}
                         initial={{ opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}
                     >
                         <p
-                            className="text-4xl font-medium tracking-[-0.04em] text-[#202020] md:text-6xl"
+                            className="text-3xl font-medium tracking-[-0.04em] md:text-5xl"
                             style={{ fontFamily: 'var(--display-font)' }}
                         >
                             No captured moments found.
@@ -267,136 +416,208 @@ export default function PhotoClientPage() {
                 )}
             </section>
 
-            <AnimatePresence>
-                {selectedPhoto && selectedIndex !== null && (
-                    <motion.div
-                        className="fixed inset-0 z-[100] overflow-y-auto bg-white text-[#202020]"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.35 }}
+            {selectedPhoto && selectedIndex !== null && (
+                <motion.dialog
+                    ref={detailRef}
+                    aria-label="Photo detail"
+                    onCancel={(event) => {
+                        event.preventDefault();
+                        setSelectedIndex(null);
+                    }}
+                    onKeyDown={(event) => {
+                        if (event.key === 'Tab') {
+                            const buttons = Array.from(
+                                event.currentTarget.querySelectorAll<HTMLButtonElement>('button'),
+                            ).filter(
+                                (button) => !button.disabled && button.getClientRects().length > 0,
+                            );
+                            const first = buttons[0];
+                            const last = buttons[buttons.length - 1];
+                            if (event.shiftKey && document.activeElement === first) {
+                                event.preventDefault();
+                                last?.focus();
+                            } else if (!event.shiftKey && document.activeElement === last) {
+                                event.preventDefault();
+                                first?.focus();
+                            }
+                        }
+                        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                            event.preventDefault();
+                            moveSelection(event.key === 'ArrowLeft' ? -1 : 1);
+                        }
+                    }}
+                    className={styles.detail}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: reduceMotion ? 0 : 0.3 }}
+                >
+                    <div
+                        ref={fullscreenRef}
+                        className={`${styles.detailViewport} min-h-screen px-5 py-5 md:px-12 md:py-10`}
                     >
-                        <div className="min-h-screen px-5 py-5 md:px-12 md:py-10">
+                        <p className={styles.detailCaption}>
+                            {activeFilter === 'ALL' ? 'ARCHIVE' : activeFilter}
+                            <span>
+                                {String(selectedIndex + 1).padStart(2, '0')} /{' '}
+                                {visiblePhotos.length}
+                            </span>
+                        </p>
+                        {fullscreenSupported && (
                             <button
                                 type="button"
-                                onClick={() => setSelectedIndex(null)}
-                                className="fixed right-5 top-5 z-20 grid size-11 place-items-center rounded-full bg-[#F2F2F2]/90 text-[#202020] transition hover:scale-105 md:right-10 md:top-10"
-                                aria-label="Close detail view"
+                                onClick={toggleFullscreen}
+                                className={`${styles.iconButton} fixed right-[4.5rem] top-5 z-20 grid md:right-24 md:top-10`}
+                                aria-label={isFullscreen ? '전체화면 종료' : '전체화면으로 보기'}
+                                title={isFullscreen ? '전체화면 종료' : '전체화면으로 보기'}
+                                aria-pressed={isFullscreen}
                             >
-                                <X size={18} />
+                                {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
                             </button>
+                        )}
+                        {fullscreenError && (
+                            <p role="status" className={styles.fullscreenError}>
+                                {fullscreenError}
+                            </p>
+                        )}
+                        <button
+                            ref={closeButtonRef}
+                            type="button"
+                            onClick={() => setSelectedIndex(null)}
+                            className={`${styles.iconButton} fixed right-5 top-5 z-20 grid md:right-10 md:top-10`}
+                            aria-label="Close detail view"
+                        >
+                            <X size={18} />
+                        </button>
 
-                            <button
-                                type="button"
-                                onClick={() => moveSelection(-1)}
-                                className="fixed left-5 top-1/2 z-20 hidden size-12 -translate-y-1/2 place-items-center rounded-full bg-[#F2F2F2]/90 text-[#202020] transition hover:scale-105 md:grid"
-                                aria-label="Previous photo"
-                            >
-                                <ChevronLeft size={20} />
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => moveSelection(1)}
-                                className="fixed right-5 top-1/2 z-20 hidden size-12 -translate-y-1/2 place-items-center rounded-full bg-[#F2F2F2]/90 text-[#202020] transition hover:scale-105 md:grid"
-                                aria-label="Next photo"
-                            >
-                                <ChevronRight size={20} />
-                            </button>
+                        <button
+                            type="button"
+                            onClick={() => moveSelection(-1)}
+                            className={`${styles.iconButton} fixed left-5 top-1/2 z-20 hidden -translate-y-1/2 md:grid`}
+                            aria-label="Previous photo"
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => moveSelection(1)}
+                            className={`${styles.iconButton} fixed right-5 top-1/2 z-20 hidden -translate-y-1/2 md:grid`}
+                            aria-label="Next photo"
+                        >
+                            <ChevronRight size={20} />
+                        </button>
 
-                            <motion.article
-                                className="mx-auto max-w-[1500px]"
-                                initial={{ clipPath: 'inset(50% 0 50% 0)' }}
-                                animate={{ clipPath: 'inset(0% 0 0% 0)' }}
-                                exit={{ clipPath: 'inset(50% 0 50% 0)' }}
-                                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                        <motion.article
+                            className="mx-auto max-w-[1500px]"
+                            initial={reduceMotion ? false : { opacity: 0, scale: 0.97, y: 16 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            transition={{
+                                duration: reduceMotion ? 0 : 0.45,
+                                ease: [0.16, 1, 0.3, 1],
+                            }}
+                        >
+                            <motion.div
+                                className="grid min-h-[64vh] touch-pan-y place-items-center"
+                                drag="x"
+                                dragConstraints={{ left: 0, right: 0 }}
+                                dragElastic={0.18}
+                                onDragEnd={(_, info) => {
+                                    const swipePower = Math.abs(info.offset.x) * info.velocity.x;
+                                    if (swipePower < -6000 || info.offset.x < -90) {
+                                        moveSelection(1);
+                                    } else if (swipePower > 6000 || info.offset.x > 90) {
+                                        moveSelection(-1);
+                                    }
+                                }}
                             >
-                                <motion.div
-                                    className="grid min-h-[64vh] touch-pan-y place-items-center"
-                                    drag="x"
-                                    dragConstraints={{ left: 0, right: 0 }}
-                                    dragElastic={0.18}
-                                    onDragEnd={(_, info) => {
-                                        const swipePower =
-                                            Math.abs(info.offset.x) * info.velocity.x;
-                                        if (swipePower < -6000 || info.offset.x < -90) {
-                                            moveSelection(1);
-                                        }
-                                        if (swipePower > 6000 || info.offset.x > 90) {
-                                            moveSelection(-1);
-                                        }
-                                    }}
-                                >
-                                    <AnimatePresence mode="wait" custom={slideDirection}>
-                                        <motion.div
-                                            key={selectedPhoto.id}
-                                            className="grid w-full place-items-center"
-                                            custom={slideDirection}
-                                            variants={detailImageVariants}
-                                            initial="enter"
-                                            animate="center"
-                                            exit="exit"
-                                            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                                        >
-                                            <FrameVisual
-                                                photo={selectedPhoto}
-                                                imageSrc={getImageSrc(selectedPhoto)}
-                                                large
-                                            />
-                                        </motion.div>
-                                    </AnimatePresence>
-                                </motion.div>
-
-                                <AnimatePresence mode="wait">
+                                <AnimatePresence mode="wait" custom={slideDirection}>
                                     <motion.div
-                                        key={`${selectedPhoto.id}-meta`}
-                                        className="mx-auto grid max-w-6xl gap-12 py-12 md:grid-cols-[0.8fr_1.2fr] md:py-16"
-                                        initial={{ opacity: 0, y: 18 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -12 }}
-                                        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                                        key={selectedPhoto.id}
+                                        className="grid w-full place-items-center"
+                                        custom={slideDirection}
+                                        variants={reduceMotion ? undefined : detailImageVariants}
+                                        initial={reduceMotion ? false : 'enter'}
+                                        animate="center"
+                                        exit="exit"
+                                        transition={{
+                                            duration: reduceMotion ? 0 : 0.3,
+                                            ease: [0.16, 1, 0.3, 1],
+                                        }}
                                     >
-                                        <div>
-                                            <p
-                                                className="mb-4 text-[10px] font-semibold uppercase tracking-[0.38em] text-[#8A8A8A]"
-                                                style={{ fontFamily: 'var(--ui-font)' }}
-                                            >
-                                                Captured
-                                            </p>
-                                            <h2
-                                                className="text-5xl font-medium leading-none tracking-[-0.055em] md:text-7xl"
-                                                style={{ fontFamily: 'var(--display-font)' }}
-                                            >
-                                                {selectedPhoto.takenAt}
-                                            </h2>
-                                        </div>
-
-                                        <TechnicalSheet photo={selectedPhoto} />
+                                        <FrameVisual
+                                            photo={selectedPhoto}
+                                            imageSrc={getImageSrc(selectedPhoto)}
+                                            fallbackSrc={getThumbnailSrc(selectedPhoto)}
+                                            large
+                                        />
                                     </motion.div>
                                 </AnimatePresence>
+                            </motion.div>
 
-                                <div className="flex justify-between pb-10 md:hidden">
-                                    <button
-                                        type="button"
-                                        onClick={() => moveSelection(-1)}
-                                        className="inline-flex items-center gap-2 rounded-full bg-[#F2F2F2]/90 px-5 py-3 text-xs font-semibold uppercase tracking-[0.2em]"
-                                    >
-                                        <ChevronLeft size={16} />
-                                        Prev
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => moveSelection(1)}
-                                        className="inline-flex items-center gap-2 rounded-full bg-[#F2F2F2]/90 px-5 py-3 text-xs font-semibold uppercase tracking-[0.2em]"
-                                    >
-                                        Next
-                                        <ChevronRight size={16} />
-                                    </button>
-                                </div>
-                            </motion.article>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={`${selectedPhoto.id}-meta`}
+                                    className="mx-auto grid max-w-6xl gap-6 py-6 md:grid-cols-[0.8fr_1.2fr] md:py-8"
+                                    initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{
+                                        duration: reduceMotion ? 0 : 0.25,
+                                        ease: [0.16, 1, 0.3, 1],
+                                    }}
+                                >
+                                    <div>
+                                        <p
+                                            className={styles.eyebrow}
+                                            style={{ fontFamily: 'var(--ui-font)' }}
+                                        >
+                                            Captured
+                                        </p>
+                                        <h2
+                                            className="mt-3 text-2xl font-medium leading-none tracking-[-0.04em] md:text-3xl"
+                                            style={{ fontFamily: 'var(--display-font)' }}
+                                        >
+                                            {selectedPhoto.takenAt}
+                                        </h2>
+                                        {selectedPhoto.topics.length > 0 && (
+                                            <ul
+                                                className={styles.detailTopics}
+                                                aria-label="Photo topics"
+                                            >
+                                                {PHOTO_TOPICS.filter((topic) =>
+                                                    selectedPhoto.topics.includes(topic.id),
+                                                ).map((topic) => (
+                                                    <li key={topic.id}>{topic.label}</li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
+
+                                    <TechnicalSheet photo={selectedPhoto} />
+                                </motion.div>
+                            </AnimatePresence>
+
+                            <div className="flex justify-between pb-10 md:hidden">
+                                <button
+                                    type="button"
+                                    onClick={() => moveSelection(-1)}
+                                    className={`${styles.loadButton} inline-flex items-center gap-2`}
+                                >
+                                    <ChevronLeft size={16} />
+                                    Prev
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => moveSelection(1)}
+                                    className={`${styles.loadButton} inline-flex items-center gap-2`}
+                                >
+                                    Next
+                                    <ChevronRight size={16} />
+                                </button>
+                            </div>
+                        </motion.article>
+                    </div>
+                </motion.dialog>
+            )}
         </main>
     );
 }
@@ -404,7 +625,7 @@ export default function PhotoClientPage() {
 const detailImageVariants = {
     enter: (direction: 1 | -1) => ({
         opacity: 0,
-        x: direction > 0 ? 80 : -80,
+        x: direction > 0 ? 24 : -24,
         scale: 0.985,
     }),
     center: {
@@ -414,38 +635,31 @@ const detailImageVariants = {
     },
     exit: (direction: 1 | -1) => ({
         opacity: 0,
-        x: direction > 0 ? -80 : 80,
+        x: direction > 0 ? -24 : 24,
         scale: 0.985,
     }),
 };
 
-function FilterBar({
-    activeFilter,
-    years,
+function TopicFilterBar({
+    activeTopic,
     onChange,
 }: {
-    activeFilter: string;
-    years: string[];
-    onChange: (filter: string) => void;
+    activeTopic: PhotoTopic | 'ALL';
+    onChange: (topic: PhotoTopic | 'ALL') => void;
 }) {
-    const filters = ['ALL', ...years];
+    const filters = [{ id: 'ALL', label: '전체' } as const, ...PHOTO_TOPICS];
 
     return (
-        <div
-            className="mt-14 flex flex-col items-center justify-center gap-5 md:flex-row md:gap-9"
-            style={{ fontFamily: 'var(--ui-font)' }}
-        >
-            <div className="flex flex-wrap items-center justify-center gap-5 md:gap-7">
-                {filters.map((filter) => (
-                    <FilterButton
-                        key={filter}
-                        active={activeFilter === filter}
-                        onClick={() => onChange(filter)}
-                    >
-                        {filter}
-                    </FilterButton>
-                ))}
-            </div>
+        <div className={styles.filters} role="group" aria-label="Filter photos by subject">
+            {filters.map((filter) => (
+                <FilterButton
+                    key={filter.id}
+                    active={activeTopic === filter.id}
+                    onClick={() => onChange(filter.id)}
+                >
+                    {filter.label}
+                </FilterButton>
+            ))}
         </div>
     );
 }
@@ -463,131 +677,68 @@ function FilterButton({
         <button
             type="button"
             onClick={onClick}
-            className={`group relative pb-2 text-[12px] font-semibold uppercase tracking-[0.24em] transition ${
-                active ? 'text-black' : 'text-[#A0A0A0] hover:text-black'
-            }`}
+            aria-pressed={active}
+            className={styles.filterButton}
         >
             {children}
-            <span
-                className={`absolute bottom-0 left-1/2 h-px -translate-x-1/2 bg-black transition-all ${
-                    active ? 'w-full' : 'w-0 group-hover:w-full'
-                }`}
-            />
         </button>
     );
 }
 
-function LandscapeCard({
+const LandscapeCard = memo(function LandscapeCard({
     photo,
+    index,
     thumbnailSrc,
     originalSrc,
     eager,
-    onImageLoad,
-    onClick,
+    onSelect,
 }: {
     photo: PhotoItem;
+    index: number;
     thumbnailSrc: string | null;
     originalSrc: string | null;
     eager: boolean;
-    onImageLoad: () => void;
-    onClick: () => void;
+    onSelect: (index: number) => void;
 }) {
     const aspectRatio = getAspectRatioStyle(photo);
 
     return (
-        <motion.div
-            role="button"
-            tabIndex={0}
+        <button
+            type="button"
+            aria-label={`View ${photo.alt || 'photo'} · ${photo.takenAt}`}
             data-orientation={photo.orientation}
-            onClick={onClick}
-            onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    onClick();
-                }
-            }}
-            className="group relative mb-px inline-block w-full break-inside-avoid overflow-hidden bg-transparent p-0 text-left align-top"
-            style={
-                {
-                    breakInside: 'avoid',
-                    columnBreakInside: 'avoid',
-                    WebkitColumnBreakInside: 'avoid',
-                } as CSSProperties
-            }
-            whileHover="hover"
+            onClick={() => onSelect(index)}
+            className={`${styles.photoCard} group`}
         >
-            <motion.div
-                className="relative h-auto w-full overflow-hidden bg-[#F7F7F7]"
-                style={{ aspectRatio }}
-                whileHover={{ boxShadow: '0 28px 70px rgba(0,0,0,0.10)' }}
-                transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-            >
-                <motion.div className="h-full w-full transition-transform duration-700 ease-out group-hover:scale-[1.03]">
+            <div className="relative h-auto w-full overflow-hidden" style={{ aspectRatio }}>
+                <div className="h-full w-full transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transform-none motion-reduce:transition-none">
                     <FrameVisual
                         photo={photo}
                         imageSrc={thumbnailSrc}
-                        thumbnailSrc={thumbnailSrc}
                         fallbackSrc={originalSrc}
                         eager={eager}
-                        onImageLoad={onImageLoad}
                     />
-                </motion.div>
+                </div>
 
-                <motion.div className="absolute inset-0 flex translate-y-3 flex-col justify-between bg-black/50 p-4 text-white opacity-0 backdrop-blur-[1px] transition duration-500 ease-out group-hover:translate-y-0 group-hover:opacity-100">
-                    <div className="flex items-start justify-between gap-4">
-                        <div
-                            className="text-[22px] font-medium leading-none tracking-[-0.04em] text-white"
-                            style={{ fontFamily: 'var(--display-font)' }}
-                        >
-                            {photo.takenAt}
-                        </div>
-                        <div className="flex items-center gap-3 text-[#A0A0A0]">
-                            {photo.isFavorite && (
-                                <span
-                                    className="grid size-8 place-items-center rounded-full bg-black/20 text-white"
-                                    aria-label="Curator's choice"
-                                >
-                                    <Star size={15} className="fill-white text-white" />
-                                </span>
-                            )}
-                            <Compass size={22} strokeWidth={1.4} />
-                        </div>
-                    </div>
-                    <div
-                        className="drop-shadow-[0_1px_12px_rgba(0,0,0,0.4)]"
-                        style={{ fontFamily: 'var(--ui-font)' }}
-                    >
-                        <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.34em] text-[#D8D8D8]">
-                            Photo Metadata
-                        </p>
-                        <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-[10px] uppercase tracking-[0.18em] text-[#A0A0A0]">
-                            <span>{photo.metadata.camera}</span>
-                            <span>{photo.metadata.aperture}</span>
-                            <span>{photo.metadata.iso}</span>
-                            <span>{photo.metadata.focalLength}</span>
-                            <span>{photo.metadata.shutterSpeed}</span>
-                        </div>
-                    </div>
-                </motion.div>
-            </motion.div>
-        </motion.div>
+                <div className={styles.cardCaption}>
+                    <span>{photo.takenAt}</span>
+                    <ArrowUpRight size={18} aria-hidden="true" />
+                </div>
+            </div>
+        </button>
     );
-}
+});
 
 function FrameVisual({
     photo,
     imageSrc,
-    thumbnailSrc,
     fallbackSrc,
-    onImageLoad,
     eager = false,
     large = false,
 }: {
     photo: PhotoItem;
     imageSrc: string | null;
-    thumbnailSrc?: string | null;
     fallbackSrc?: string | null;
-    onImageLoad?: () => void;
     eager?: boolean;
     large?: boolean;
 }) {
@@ -612,38 +763,26 @@ function FrameVisual({
             >
                 {!large && (
                     <div
-                        className={`absolute inset-0 bg-[#F9F9F9] transition-opacity duration-300 ${
+                        className={`absolute inset-0 transition-opacity duration-300 ${
                             isImageLoaded ? 'opacity-0' : 'opacity-100'
                         }`}
                     >
-                        <div className="h-full w-full animate-pulse bg-gradient-to-r from-[#F9F9F9] via-[#EFEFEF] to-[#F9F9F9]" />
+                        <div className={styles.skeleton} />
                     </div>
                 )}
-                {!large &&
-                    thumbnailSrc &&
-                    thumbnailSrc !== imageSrc &&
-                    thumbnailSrc !== activeImageSrc && (
-                        <img
-                            src={thumbnailSrc}
-                            alt=""
-                            aria-hidden="true"
-                            loading={eager ? 'eager' : 'lazy'}
-                            className="absolute inset-0 h-full w-full scale-105 object-cover blur-xl"
-                        />
-                    )}
                 <img
                     key={activeImageSrc}
                     src={activeImageSrc}
                     alt={photo.alt || photo.id}
                     loading={large || eager ? 'eager' : 'lazy'}
-                    fetchPriority={large || eager ? 'high' : 'auto'}
+                    fetchPriority={large ? 'high' : 'auto'}
                     decoding="async"
+                    draggable={false}
                     onLoad={() => {
                         setIsImageLoaded(true);
-                        onImageLoad?.();
                     }}
                     onError={() => {
-                        if (!large && fallbackSrc && activeImageSrc !== fallbackSrc) {
+                        if (fallbackSrc && activeImageSrc !== fallbackSrc) {
                             setIsImageLoaded(false);
                             setActiveImageSrc(fallbackSrc);
                             return;
@@ -655,7 +794,7 @@ function FrameVisual({
                     }}
                     className={
                         large
-                            ? 'block max-h-[78vh] max-w-full object-contain'
+                            ? `block max-h-[78vh] max-w-full object-contain ${styles.detailImage}`
                             : 'relative block h-full w-full object-cover'
                     }
                 />
@@ -665,16 +804,15 @@ function FrameVisual({
 
     return (
         <div
-            className={`relative grid h-full w-full place-items-center overflow-hidden bg-[linear-gradient(180deg,#F7F7F7_0%,#EDEDED_48%,#D8D8D8_49%,#F9F9F9_100%)] ${
+            className={`${styles.imagePlaceholder} relative grid h-full w-full place-items-center overflow-hidden ${
                 large ? 'aspect-[16/9] max-h-[72vh] w-full max-w-[1300px]' : ''
             }`}
         >
-            <div className="absolute left-0 right-0 top-[48%] h-px bg-[#D8D8D8]" />
             <div className="relative z-10 text-center" style={{ fontFamily: 'var(--ui-font)' }}>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.36em] text-[#9A9A9A]">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.25em]">
                     {hasImageError ? 'Image Unavailable' : 'Image Pending'}
                 </p>
-                <p className="mt-3 text-[12px] text-[#7A7A7A]">{photo.aspectRatio}</p>
+                <p className="mt-3 text-[12px]">{photo.aspectRatio}</p>
             </div>
         </div>
     );
@@ -692,15 +830,13 @@ function TechnicalSheet({ photo }: { photo: PhotoItem }) {
     ];
 
     return (
-        <div className="bg-[#F2F2F2]/70 p-8" style={{ fontFamily: 'var(--ui-font)' }}>
-            <p className="mb-7 text-[10px] font-semibold uppercase tracking-[0.34em] text-[#7A7A7A]">
-                Technical Spec
-            </p>
+        <div className={styles.technicalSheet}>
+            <p className={`${styles.eyebrow} mb-7`}>Technical Spec</p>
             <dl className="space-y-4">
                 {rows.map(([label, value]) => (
-                    <div key={label} className="grid grid-cols-[120px_1fr] gap-6 text-[12px]">
-                        <dt className="uppercase tracking-[0.18em] text-[#8A8A8A]">{label}</dt>
-                        <dd className="text-[#202020]">{value}</dd>
+                    <div key={label} className={styles.specRow}>
+                        <dt>{label}</dt>
+                        <dd>{value}</dd>
                     </div>
                 ))}
             </dl>

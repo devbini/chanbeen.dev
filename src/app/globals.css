@@ -2,6 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Use one timing for all theme colors, then restore component hover effects. */
+html.theme-changing,
+html.theme-changing *,
+html.theme-changing *::before,
+html.theme-changing *::after {
+    transition:
+        background-color 320ms ease,
+        color 320ms ease,
+        border-color 320ms ease,
+        outline-color 320ms ease,
+        text-decoration-color 320ms ease,
+        fill 320ms ease,
+        stroke 320ms ease,
+        box-shadow 320ms ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.theme-changing,
+    html.theme-changing *,
+    html.theme-changing *::before,
+    html.theme-changing *::after {
+        transition: none !important;
+    }
+}
+
 @layer base {
     :root {
         --background: 0 0% 100%;
@@ -74,4 +99,154 @@
 .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+/* Shared palette for page surfaces, text, and controls. */
+:root {
+    color-scheme: light;
+    --header-bg: rgba(255, 255, 255, 0.8);
+    --overlay-bg: rgba(255, 255, 255, 0.9);
+    --header-border: rgba(226, 232, 240, 0.6);
+    --palette-0ea5e9: #0ea5e9;
+    --palette-0f172a: #0f172a;
+    --palette-16a34a: #16a34a;
+    --palette-1d4ed8: #1d4ed8;
+    --palette-1e293b: #1e293b;
+    --palette-2563eb: #2563eb;
+    --palette-334155: #334155;
+    --palette-3b82f6: #3b82f6;
+    --palette-475569: #475569;
+    --palette-4ade80: #4ade80;
+    --palette-4f46e5: #4f46e5;
+    --palette-60a5fa: #60a5fa;
+    --palette-64748b: #64748b;
+    --palette-7e22ce: #7e22ce;
+    --palette-8b5cf6: #8b5cf6;
+    --palette-9333ea: #9333ea;
+    --palette-93c5fd: #93c5fd;
+    --palette-94a3b8: #94a3b8;
+    --palette-9ca3af: #9ca3af;
+    --palette-b45309: #b45309;
+    --palette-bfdbfe: #bfdbfe;
+    --palette-c084fc: #c084fc;
+    --palette-cbd5e1: #cbd5e1;
+    --palette-dbe3ee: #dbe3ee;
+    --palette-dbeafe: #dbeafe;
+    --palette-dcfce7: #dcfce7;
+    --palette-e2e8f0: #e2e8f0;
+    --palette-ea580c: #ea580c;
+    --palette-eab308: #eab308;
+    --palette-ef4444: #ef4444;
+    --palette-eff6ff: #eff6ff;
+    --palette-f0fdf4: #f0fdf4;
+    --palette-f1f5f9: #f1f5f9;
+    --palette-f3e8ff: #f3e8ff;
+    --palette-f8fafc: #f8fafc;
+    --palette-f8fbff: #f8fbff;
+    --palette-ffedd5: #ffedd5;
+    --palette-ffffff: #ffffff;
+}
+html.dark {
+    color-scheme: dark;
+    --header-bg: rgba(15, 23, 42, 0.85);
+    --overlay-bg: rgba(17, 24, 39, 0.9);
+    --header-border: #334155;
+    --palette-0ea5e9: #0ea5e9;
+    --palette-0f172a: #f1f5f9;
+    --palette-16a34a: #4ade80;
+    --palette-1d4ed8: #93c5fd;
+    --palette-1e293b: #e2e8f0;
+    --palette-2563eb: #60a5fa;
+    --palette-334155: #cbd5e1;
+    --palette-3b82f6: #60a5fa;
+    --palette-475569: #b6c2d2;
+    --palette-4ade80: #4ade80;
+    --palette-4f46e5: #a5b4fc;
+    --palette-60a5fa: #60a5fa;
+    --palette-64748b: #a8b6ca;
+    --palette-7e22ce: #d8b4fe;
+    --palette-8b5cf6: #8b5cf6;
+    --palette-9333ea: #c084fc;
+    --palette-93c5fd: #60a5fa;
+    --palette-94a3b8: #94a3b8;
+    --palette-9ca3af: #9ca3af;
+    --palette-b45309: #fbbf24;
+    --palette-bfdbfe: #315783;
+    --palette-c084fc: #c084fc;
+    --palette-cbd5e1: #475569;
+    --palette-dbe3ee: #334155;
+    --palette-dbeafe: #1e3a5f;
+    --palette-dcfce7: #16432e;
+    --palette-e2e8f0: #334155;
+    --palette-ea580c: #fb923c;
+    --palette-eab308: #eab308;
+    --palette-ef4444: #f87171;
+    --palette-eff6ff: #172b49;
+    --palette-f0fdf4: #123326;
+    --palette-f1f5f9: #1e293b;
+    --palette-f3e8ff: #35204d;
+    --palette-f8fafc: #0f172a;
+    --palette-f8fbff: #172033;
+    --palette-ffedd5: #422b19;
+    --palette-ffffff: #111827;
+}
+
+/* Keep the theme switch within reach on every page, including mobile. */
+.site-theme-toggle {
+    position: fixed;
+    right: max(24px, env(safe-area-inset-right));
+    bottom: calc(24px + env(safe-area-inset-bottom));
+    z-index: 60;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 96px;
+    min-height: 48px;
+    padding: 0 18px;
+    color: var(--palette-0f172a);
+    border: 1px solid var(--palette-e2e8f0);
+    border-radius: 999px;
+    background: var(--palette-ffffff);
+    box-shadow: 0 4px 20px rgb(0 0 0 / 16%);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        transform 160ms ease,
+        box-shadow 160ms ease;
+}
+.site-theme-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgb(0 0 0 / 22%);
+}
+.site-theme-toggle:focus-visible {
+    outline: 2px solid var(--palette-2563eb);
+    outline-offset: 4px;
+}
+.theme-sun,
+.dark .theme-moon {
+    display: none;
+}
+.dark .theme-sun {
+    display: inline-flex;
+}
+.theme-moon {
+    display: inline-flex;
+}
+.theme-sun,
+.theme-moon {
+    align-items: center;
+    gap: 8px;
+}
+@media (max-width: 480px) {
+    .site-theme-toggle {
+        right: max(16px, env(safe-area-inset-right));
+        bottom: calc(16px + env(safe-area-inset-bottom));
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .site-theme-toggle {
+        transition: none;
+    }
 }
