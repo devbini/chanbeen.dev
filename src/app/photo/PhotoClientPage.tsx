@@ -2,8 +2,8 @@
 
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowUpRight, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { ArrowUpRight, ChevronLeft, ChevronRight, Maximize, Minimize, X } from 'lucide-react';
 import styles from './photo.module.css';
 import { getPhotoTopics, PHOTO_TOPICS } from './photo-topics';
 import type { PhotoTopic } from './photo-topics';
@@ -56,6 +56,7 @@ const getAspectRatioStyle = (photo: PhotoItem) => {
 };
 
 export default function PhotoClientPage() {
+    const reduceMotion = useReducedMotion();
     const [photos, setPhotos] = useState<PhotoItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [loadError, setLoadError] = useState<string | null>(null);
@@ -66,6 +67,10 @@ export default function PhotoClientPage() {
     const [renderCount, setRenderCount] = useState(INITIAL_RENDER_COUNT);
     const [columnCount, setColumnCount] = useState(2);
     const [loadAttempt, setLoadAttempt] = useState(0);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [fullscreenSupported, setFullscreenSupported] = useState(false);
+    const [fullscreenError, setFullscreenError] = useState<string | null>(null);
+    const fullscreenRef = useRef<HTMLDivElement>(null);
     const loadMoreRef = useRef<HTMLDivElement>(null);
     const detailRef = useRef<HTMLDialogElement>(null);
     const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -184,15 +189,48 @@ export default function PhotoClientPage() {
         document.body.style.overflow = 'hidden';
         if (scrollbarWidth > 0)
             document.body.style.paddingRight = `${bodyPadding + scrollbarWidth}px`;
+        const fullscreenTarget = fullscreenRef.current;
+        setFullscreenError(null);
         dialog.showModal();
         closeButtonRef.current?.focus({ preventScroll: true });
         return () => {
+            if (fullscreenTarget && document.fullscreenElement === fullscreenTarget) {
+                void document.exitFullscreen().catch(() => {});
+            }
             dialog.close();
             document.body.style.overflow = previousOverflow;
             document.body.style.paddingRight = previousPadding;
             previousFocus?.focus({ preventScroll: true });
         };
     }, [isDetailOpen]);
+
+    useEffect(() => {
+        setFullscreenSupported(Boolean(document.fullscreenEnabled));
+        const syncFullscreen = () => {
+            setIsFullscreen(
+                Boolean(
+                    fullscreenRef.current && document.fullscreenElement === fullscreenRef.current,
+                ),
+            );
+        };
+        document.addEventListener('fullscreenchange', syncFullscreen);
+        return () => document.removeEventListener('fullscreenchange', syncFullscreen);
+    }, []);
+
+    const toggleFullscreen = async () => {
+        const target = fullscreenRef.current;
+        if (!target) return;
+        setFullscreenError(null);
+        try {
+            if (document.fullscreenElement === target) {
+                await document.exitFullscreen();
+            } else {
+                await target.requestFullscreen();
+            }
+        } catch {
+            setFullscreenError('전체화면으로 전환하지 못했습니다. 다시 시도해 주세요.');
+        }
+    };
 
     const changeFilter = (filter: string) => {
         setActiveFilter(filter);
@@ -411,9 +449,12 @@ export default function PhotoClientPage() {
                     className={styles.detail}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ duration: 0.35 }}
+                    transition={{ duration: reduceMotion ? 0 : 0.3 }}
                 >
-                    <div className="min-h-screen px-5 py-5 md:px-12 md:py-10">
+                    <div
+                        ref={fullscreenRef}
+                        className={`${styles.detailViewport} min-h-screen px-5 py-5 md:px-12 md:py-10`}
+                    >
                         <p className={styles.detailCaption}>
                             {activeFilter === 'ALL' ? 'ARCHIVE' : activeFilter}
                             <span>
@@ -421,6 +462,23 @@ export default function PhotoClientPage() {
                                 {visiblePhotos.length}
                             </span>
                         </p>
+                        {fullscreenSupported && (
+                            <button
+                                type="button"
+                                onClick={toggleFullscreen}
+                                className={`${styles.iconButton} fixed right-[4.5rem] top-5 z-20 grid md:right-24 md:top-10`}
+                                aria-label={isFullscreen ? '전체화면 종료' : '전체화면으로 보기'}
+                                title={isFullscreen ? '전체화면 종료' : '전체화면으로 보기'}
+                                aria-pressed={isFullscreen}
+                            >
+                                {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
+                            </button>
+                        )}
+                        {fullscreenError && (
+                            <p role="status" className={styles.fullscreenError}>
+                                {fullscreenError}
+                            </p>
+                        )}
                         <button
                             ref={closeButtonRef}
                             type="button"
@@ -450,10 +508,12 @@ export default function PhotoClientPage() {
 
                         <motion.article
                             className="mx-auto max-w-[1500px]"
-                            initial={{ clipPath: 'inset(50% 0 50% 0)' }}
-                            animate={{ clipPath: 'inset(0% 0 0% 0)' }}
-                            exit={{ clipPath: 'inset(50% 0 50% 0)' }}
-                            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                            initial={reduceMotion ? false : { opacity: 0, scale: 0.97, y: 16 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            transition={{
+                                duration: reduceMotion ? 0 : 0.45,
+                                ease: [0.16, 1, 0.3, 1],
+                            }}
                         >
                             <motion.div
                                 className="grid min-h-[64vh] touch-pan-y place-items-center"
@@ -474,11 +534,14 @@ export default function PhotoClientPage() {
                                         key={selectedPhoto.id}
                                         className="grid w-full place-items-center"
                                         custom={slideDirection}
-                                        variants={detailImageVariants}
-                                        initial="enter"
+                                        variants={reduceMotion ? undefined : detailImageVariants}
+                                        initial={reduceMotion ? false : 'enter'}
                                         animate="center"
                                         exit="exit"
-                                        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                                        transition={{
+                                            duration: reduceMotion ? 0 : 0.3,
+                                            ease: [0.16, 1, 0.3, 1],
+                                        }}
                                     >
                                         <FrameVisual
                                             photo={selectedPhoto}
@@ -493,11 +556,14 @@ export default function PhotoClientPage() {
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={`${selectedPhoto.id}-meta`}
-                                    className="mx-auto grid max-w-6xl gap-12 py-12 md:grid-cols-[0.8fr_1.2fr] md:py-16"
-                                    initial={{ opacity: 0, y: 18 }}
+                                    className="mx-auto grid max-w-6xl gap-6 py-6 md:grid-cols-[0.8fr_1.2fr] md:py-8"
+                                    initial={reduceMotion ? false : { opacity: 0, y: 8 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -12 }}
-                                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{
+                                        duration: reduceMotion ? 0 : 0.25,
+                                        ease: [0.16, 1, 0.3, 1],
+                                    }}
                                 >
                                     <div>
                                         <p
@@ -507,7 +573,7 @@ export default function PhotoClientPage() {
                                             Captured
                                         </p>
                                         <h2
-                                            className="mt-4 text-4xl font-medium leading-none tracking-[-0.055em] md:text-6xl"
+                                            className="mt-3 text-2xl font-medium leading-none tracking-[-0.04em] md:text-3xl"
                                             style={{ fontFamily: 'var(--display-font)' }}
                                         >
                                             {selectedPhoto.takenAt}
@@ -559,7 +625,7 @@ export default function PhotoClientPage() {
 const detailImageVariants = {
     enter: (direction: 1 | -1) => ({
         opacity: 0,
-        x: direction > 0 ? 80 : -80,
+        x: direction > 0 ? 24 : -24,
         scale: 0.985,
     }),
     center: {
@@ -569,7 +635,7 @@ const detailImageVariants = {
     },
     exit: (direction: 1 | -1) => ({
         opacity: 0,
-        x: direction > 0 ? -80 : 80,
+        x: direction > 0 ? -24 : 24,
         scale: 0.985,
     }),
 };
@@ -728,7 +794,7 @@ function FrameVisual({
                     }}
                     className={
                         large
-                            ? 'block max-h-[78vh] max-w-full object-contain'
+                            ? `block max-h-[78vh] max-w-full object-contain ${styles.detailImage}`
                             : 'relative block h-full w-full object-cover'
                     }
                 />
