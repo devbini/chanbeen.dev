@@ -10,7 +10,6 @@ import { Github, Linkedin, ChevronDown, Terminal, Camera, Menu, X } from 'lucide
 const mobileLinks = [
     { href: '/about', label: 'Resume' },
     { href: '/blog', label: 'View All Posts' },
-    { href: '/photo', label: 'Photo Archive' },
 ];
 
 const categoryLinks = [
@@ -174,6 +173,9 @@ export default function Header() {
                         rel="noopener noreferrer"
                     >
                         LinkedIn
+                    </Link>
+                    <Link href="/photo" aria-current={pathname === '/photo' ? 'page' : undefined}>
+                        Photo Archive
                     </Link>
                 </div>
             </MobileNavigation>
@@ -452,6 +454,7 @@ const MobileNavigation = styled.nav`
     }
     .socials {
         display: flex;
+        flex-wrap: wrap;
         gap: 0.5rem;
     }
     @media (min-width: 768px) {

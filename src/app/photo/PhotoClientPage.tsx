@@ -304,9 +304,6 @@ export default function PhotoClientPage() {
                             <h1 className={styles.title}>
                                 Quiet Horizons<span>.</span>
                             </h1>
-                            <p className={styles.description}>
-                                지나온 계절, 오래 남기고 싶은 장면들.
-                            </p>
                         </div>
                     </div>
                     <div className={styles.toolbar}>
@@ -745,11 +742,14 @@ function FrameVisual({
     const [isImageLoaded, setIsImageLoaded] = useState(false);
     const [activeImageSrc, setActiveImageSrc] = useState(imageSrc);
     const [hasImageError, setHasImageError] = useState(false);
+    const [previewFailed, setPreviewFailed] = useState(false);
+    const [ratioWidth, ratioHeight] = photo.aspectRatio.split('/').map(Number);
 
     useEffect(() => {
         setIsImageLoaded(false);
         setActiveImageSrc(imageSrc);
         setHasImageError(false);
+        setPreviewFailed(false);
     }, [imageSrc]);
 
     if (activeImageSrc && !hasImageError) {
@@ -757,10 +757,24 @@ function FrameVisual({
             <div
                 className={
                     large
-                        ? 'relative grid h-full w-full place-items-center overflow-visible'
+                        ? 'relative grid w-full place-items-center overflow-visible'
                         : 'relative h-full w-full overflow-hidden'
                 }
             >
+                {large && fallbackSrc && !previewFailed && (
+                    <img
+                        src={fallbackSrc}
+                        alt=""
+                        aria-hidden="true"
+                        width={ratioWidth * 300}
+                        height={ratioHeight * 300}
+                        loading="eager"
+                        decoding="async"
+                        draggable={false}
+                        onError={() => setPreviewFailed(true)}
+                        className={`${styles.detailImage} ${styles.detailPreview}`}
+                    />
+                )}
                 {!large && (
                     <div
                         className={`absolute inset-0 transition-opacity duration-300 ${
@@ -772,6 +786,8 @@ function FrameVisual({
                 )}
                 <img
                     key={activeImageSrc}
+                    width={large ? ratioWidth * 300 : undefined}
+                    height={large ? ratioHeight * 300 : undefined}
                     src={activeImageSrc}
                     alt={photo.alt || photo.id}
                     loading={large || eager ? 'eager' : 'lazy'}
@@ -792,9 +808,10 @@ function FrameVisual({
                         setHasImageError(true);
                         setActiveImageSrc(null);
                     }}
+                    style={large ? { opacity: isImageLoaded ? 1 : 0 } : undefined}
                     className={
                         large
-                            ? `block max-h-[78vh] max-w-full object-contain ${styles.detailImage}`
+                            ? `block max-h-[78vh] max-w-full object-contain ${styles.detailImage} ${styles.detailOriginal}`
                             : 'relative block h-full w-full object-cover'
                     }
                 />

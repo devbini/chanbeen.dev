@@ -419,3 +419,23 @@
         transition: none !important;
     }
 }
+
+/* Both layers share their dimensions so the preview never shifts when the original arrives. */
+.detailPreview,
+.detailOriginal {
+    grid-area: 1 / 1;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 78vh;
+    object-fit: contain;
+}
+.detailOriginal {
+    position: relative;
+    transition: opacity 300ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+    .detailOriginal {
+        transition: none;
+    }
+}
