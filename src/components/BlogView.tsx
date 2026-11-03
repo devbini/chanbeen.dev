@@ -136,8 +136,8 @@ export default function BlogView({ posts, currentCategory }: BlogViewProps) {
 //  스타일 컴포넌트
 const Container = styled.div`
     min-height: 100vh;
-    background-color: #f8fafc;
-    color: #0f172a;
+    background-color: var(--palette-f8fafc);
+    color: var(--palette-0f172a);
     padding-top: 6rem;
 `;
 
@@ -164,13 +164,13 @@ const SectionHeader = styled.div`
 const SectionTitle = styled.h1`
     font-size: 2.5rem;
     font-weight: 900;
-    color: #0f172a;
+    color: var(--palette-0f172a);
     margin-bottom: 0.75rem;
     letter-spacing: -0.025em;
 `;
 
 const SectionSubtitle = styled.p`
-    color: #64748b;
+    color: var(--palette-64748b);
     font-size: 1.125rem;
 `;
 
@@ -202,18 +202,18 @@ const CategoryBtn = styled.button<{ $active: boolean }>`
             ? css`
                   background-color: #0f172a;
                   color: white;
-                  border-color: #0f172a;
+                  border-color: var(--palette-0f172a);
                   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
               `
             : css`
-                  background-color: white;
-                  color: #64748b;
-                  border-color: #e2e8f0;
+                  background-color: var(--palette-ffffff);
+                  color: var(--palette-64748b);
+                  border-color: var(--palette-e2e8f0);
 
                   &:hover {
-                      background-color: #f8fafc;
-                      border-color: #cbd5e1;
-                      color: #0f172a;
+                      background-color: var(--palette-f8fafc);
+                      border-color: var(--palette-cbd5e1);
+                      color: var(--palette-0f172a);
                   }
               `}
 `;
@@ -236,8 +236,8 @@ const BlogCard = styled(Link)`
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: white;
-    border: 1px solid #e2e8f0;
+    background: var(--palette-ffffff);
+    border: 1px solid var(--palette-e2e8f0);
     border-radius: 1rem;
     overflow: hidden;
     text-decoration: none;
@@ -246,7 +246,7 @@ const BlogCard = styled(Link)`
     transform: translateZ(0);
 
     &:hover {
-        border-color: #93c5fd;
+        border-color: var(--palette-93c5fd);
         transform: translateY(-4px);
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
@@ -256,7 +256,7 @@ const ThumbnailWrapper = styled.div`
     position: relative;
     height: 14rem;
     width: 100%;
-    background-color: #f1f5f9;
+    background-color: var(--palette-f1f5f9);
     overflow: hidden;
     border-top-left-radius: 1rem;
     border-top-right-radius: 1rem;
@@ -280,9 +280,9 @@ const ThumbnailWrapper = styled.div`
         left: 1rem;
         z-index: 10;
         padding: 0.25rem 0.75rem;
-        background-color: rgba(255, 255, 255, 0.9);
+        background-color: var(--overlay-bg);
         backdrop-filter: blur(4px);
-        color: #334155;
+        color: var(--palette-334155);
         font-size: 0.625rem;
         font-weight: 700;
         text-transform: uppercase;
@@ -304,7 +304,7 @@ const CardContent = styled.div`
         gap: 0.5rem;
         margin-bottom: 0.75rem;
         font-size: 0.75rem;
-        color: #94a3b8;
+        color: var(--palette-94a3b8);
         font-family: monospace;
         font-weight: 500;
     }
@@ -312,17 +312,17 @@ const CardContent = styled.div`
     h3 {
         font-size: 1.25rem;
         font-weight: 700;
-        color: #0f172a;
+        color: var(--palette-0f172a);
         margin-bottom: 0.75rem;
         line-height: 1.4;
         transition: color 0.2s;
     }
     ${BlogCard}:hover & h3 {
-        color: #2563eb;
+        color: var(--palette-2563eb);
     }
 
     p {
-        color: #64748b;
+        color: var(--palette-64748b);
         font-size: 0.875rem;
         line-height: 1.6;
         margin-bottom: 1.5rem;
@@ -338,17 +338,17 @@ const CardContent = styled.div`
         align-items: center;
         font-size: 0.75rem;
         font-weight: 700;
-        color: #0f172a;
+        color: var(--palette-0f172a);
         margin-top: auto;
         padding-top: 1.25rem;
-        border-top: 1px solid #f1f5f9;
+        border-top: 1px solid var(--palette-f1f5f9);
         transition: color 0.2s;
         svg {
             margin-left: 0.5rem;
         }
     }
     ${BlogCard}:hover & .read-more {
-        color: #2563eb;
+        color: var(--palette-2563eb);
     }
 `;
 
@@ -356,10 +356,10 @@ const EmptyState = styled.div`
     grid-column: 1 / -1;
     padding: 8rem 0;
     text-align: center;
-    color: #94a3b8;
-    background-color: white;
+    color: var(--palette-94a3b8);
+    background-color: var(--palette-ffffff);
     border-radius: 1rem;
-    border: 1px dashed #e2e8f0;
+    border: 1px dashed var(--palette-e2e8f0);
     font-size: 1rem;
 `;
 
@@ -378,22 +378,22 @@ const PageBtnBase = styled.button`
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 0.5rem;
-    border: 1px solid #e2e8f0;
-    background-color: white;
-    color: #64748b;
+    border: 1px solid var(--palette-e2e8f0);
+    background-color: var(--palette-ffffff);
+    color: var(--palette-64748b);
     cursor: pointer;
     transition: all 0.2s;
 
     &:disabled {
         opacity: 0.5;
         cursor: not-allowed;
-        background-color: #f1f5f9;
+        background-color: var(--palette-f1f5f9);
     }
 
     &:not(:disabled):hover {
-        background-color: #f8fafc;
-        color: #0f172a;
-        border-color: #cbd5e1;
+        background-color: var(--palette-f8fafc);
+        color: var(--palette-0f172a);
+        border-color: var(--palette-cbd5e1);
     }
 `;
 
@@ -408,7 +408,7 @@ const PageNumberBtn = styled(PageBtnBase)<{ $active: boolean }>`
         css`
             background-color: #0f172a;
             color: white;
-            border-color: #0f172a;
+            border-color: var(--palette-0f172a);
 
             &:not(:disabled):hover {
                 background-color: #1e293b;

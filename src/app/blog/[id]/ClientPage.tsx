@@ -112,8 +112,8 @@ export default function ClientPage({ postData, contentWithIds, headings }: Clien
 
 const PageContainer = styled.div`
     min-height: 100vh;
-    background-color: #ffffff;
-    color: #1e293b;
+    background-color: var(--palette-ffffff);
+    color: var(--palette-1e293b);
     padding-bottom: 8rem;
 `;
 
@@ -122,7 +122,7 @@ const ProgressBar = styled.div`
     top: 0;
     left: 0;
     height: 4px;
-    background: linear-gradient(to right, #3b82f6, #8b5cf6);
+    background: linear-gradient(to right, var(--palette-3b82f6), var(--palette-8b5cf6));
     z-index: 100;
     transition: width 0.1s ease-out;
 `;
@@ -234,13 +234,13 @@ const TocBox = styled.div`
     position: sticky;
     top: 8rem;
     padding-left: 1.5rem;
-    border-left: 2px solid #e2e8f0;
+    border-left: 2px solid var(--palette-e2e8f0);
 
     .toc-header {
         font-size: 0.75rem;
         font-weight: 700;
         text-transform: uppercase;
-        color: #94a3b8;
+        color: var(--palette-94a3b8);
         margin-bottom: 1rem;
         letter-spacing: 0.05em;
     }
@@ -263,14 +263,14 @@ const TocItem = styled.li<{ $level: number }>`
 
     a {
         display: block;
-        color: #64748b;
+        color: var(--palette-64748b);
         font-weight: 400;
         text-decoration: none;
         line-height: 1.4;
         transition: color 0.2s;
 
         &:hover {
-            color: #3b82f6;
+            color: var(--palette-3b82f6);
         }
     }
 `;
@@ -278,13 +278,13 @@ const TocItem = styled.li<{ $level: number }>`
 const MarkdownBody = styled.div`
     font-size: 1.05rem;
     line-height: 1.8;
-    color: #334155;
+    color: var(--palette-334155);
 
     h1,
     h2,
     h3,
     h4 {
-        color: #0f172a;
+        color: var(--palette-0f172a);
         font-weight: 800;
         margin-top: 3.5rem;
         margin-bottom: 1.25rem;
@@ -294,7 +294,7 @@ const MarkdownBody = styled.div`
 
     h2 {
         font-size: 1.75rem;
-        border-bottom: 1px solid #e2e8f0;
+        border-bottom: 1px solid var(--palette-e2e8f0);
         padding-bottom: 0.5rem;
     }
     h3 {
@@ -309,7 +309,7 @@ const MarkdownBody = styled.div`
     }
 
     a {
-        color: #2563eb;
+        color: var(--palette-2563eb);
         text-decoration: none;
         font-weight: 600;
         border-bottom: 1px solid transparent;
@@ -338,18 +338,18 @@ const MarkdownBody = styled.div`
         color: #cbd5e1;
     }
     ol li::marker {
-        color: #2563eb;
+        color: var(--palette-2563eb);
         font-weight: 700;
     }
 
     blockquote {
-        border-left: 4px solid #3b82f6;
-        background-color: #f8fafc;
+        border-left: 4px solid var(--palette-3b82f6);
+        background-color: var(--palette-f8fafc);
         padding: 1.25rem 1.5rem;
         border-radius: 0 0.5rem 0.5rem 0;
         margin: 2rem 0;
         font-style: italic;
-        color: #475569;
+        color: var(--palette-475569);
         p:last-child {
             margin-bottom: 0;
         }
@@ -384,8 +384,8 @@ const MarkdownBody = styled.div`
     code {
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
         font-size: 0.85em;
-        background-color: #f1f5f9;
-        color: #ef4444;
+        background-color: var(--palette-f1f5f9);
+        color: var(--palette-ef4444);
         padding: 0.2em 0.4em;
         border-radius: 0.25rem;
         font-weight: 600;
@@ -404,7 +404,7 @@ const MarkdownBody = styled.div`
     hr {
         border: 0;
         height: 1px;
-        background-color: #cbd5e1;
+        background-color: var(--palette-cbd5e1);
         margin: 3rem 0;
     }
 
@@ -416,14 +416,14 @@ const MarkdownBody = styled.div`
 
         th,
         td {
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--palette-e2e8f0);
             padding: 0.75rem 1rem;
             text-align: left;
         }
         th {
-            background-color: #f8fafc;
+            background-color: var(--palette-f8fafc);
             font-weight: 700;
-            color: #0f172a;
+            color: var(--palette-0f172a);
         }
     }
 `;
@@ -431,7 +431,7 @@ const MarkdownBody = styled.div`
 const Divider = styled.hr`
     border: 0;
     height: 1px;
-    background-color: #cbd5e1;
+    background-color: var(--palette-cbd5e1);
     margin: 4rem 0;
 `;
 
@@ -447,18 +447,18 @@ const BackBtn = styled.a`
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
     border-radius: 9999px;
-    background-color: white;
-    color: #64748b;
+    background-color: var(--palette-ffffff);
+    color: var(--palette-64748b);
     font-weight: 600;
     font-size: 0.9rem;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--palette-e2e8f0);
     transition: all 0.2s;
     cursor: pointer;
 
     &:hover {
-        border-color: #cbd5e1;
-        background-color: #f8fafc;
-        color: #0f172a;
+        border-color: var(--palette-cbd5e1);
+        background-color: var(--palette-f8fafc);
+        color: var(--palette-0f172a);
         transform: translateY(-2px);
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }

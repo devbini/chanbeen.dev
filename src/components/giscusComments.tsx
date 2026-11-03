@@ -1,8 +1,10 @@
 'use client';
 
 import Giscus from '@giscus/react';
+import { useTheme } from './theme-provider';
 
 export default function GiscusComments() {
+    const { theme } = useTheme();
     return (
         <Giscus
             repo="devbini/chanbeen.dev"
@@ -14,7 +16,7 @@ export default function GiscusComments() {
             reactionsEnabled="1"
             emitMetadata="0"
             inputPosition="bottom"
-            theme="preferred_color_scheme"
+            theme={theme}
             lang="ko"
             loading="lazy"
         />
