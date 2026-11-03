@@ -20,9 +20,9 @@ const FooterWrapper = styled.footer`
     padding: 2.5rem 0;
     text-align: center;
     font-size: 0.75rem;
-    color: #94a3b8;
-    border-top: 1px solid #e2e8f0;
-    background-color: white;
+    color: var(--palette-94a3b8);
+    border-top: 1px solid var(--palette-e2e8f0);
+    background-color: var(--palette-ffffff);
     position: relative;
     z-index: 10;
 
@@ -33,11 +33,11 @@ const FooterWrapper = styled.footer`
         margin-bottom: 1rem;
 
         a {
-            color: #94a3b8;
+            color: var(--palette-94a3b8);
             text-decoration: none;
             transition: color 0.2s;
             &:hover {
-                color: #0f172a;
+                color: var(--palette-0f172a);
             }
         }
     }

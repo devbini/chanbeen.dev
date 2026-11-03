@@ -264,7 +264,6 @@ export default function AboutClientPage() {
                             <TimelineItem>
                                 <div className="date-col">
                                     <span className="period">2025.04 - Present</span>
-                                    <span className="duration">1 yr</span>
                                 </div>
                                 <div className="content-col">
                                     <h3 className="company">(주)웨어밸리 (WareValley)</h3>
@@ -279,17 +278,17 @@ export default function AboutClientPage() {
                                     <ul className="details">
                                         <li>
                                             <strong>
-                                                GitLab CI/CD, Jenkins, Docker, ArgoCD, k3s 기반 내부
-                                                개발 인프라 및 배포 자동화 환경 구축
+                                                개발과 QA가 제품을 같은 조건에서 확인할 수 있도록
+                                                k3s 기반 내부 컨테이너 환경 신규 구축
                                             </strong>
                                         </li>
                                         <li>
-                                            Ansible 기반 IaC 구성과 폐쇄망·외부망 조건을 고려한 배포
-                                            흐름 표준화
+                                            Jenkins 빌드와 GitLab Container Registry 이미지 저장,
+                                            manifest 갱신과 Argo CD Sync를 연결한 GitOps 배포 자동화
                                         </li>
                                         <li>
-                                            반복 운영 작업 축소를 위한 서버 환경 일관성 정비 및
-                                            자동화 운영
+                                            Ansible로 서버 초기 설정과 운영 도구 설치 표준화,
+                                            Terraform으로 GitLab 계정, 그룹, Webhook 관리 코드화
                                         </li>
                                     </ul>
                                     <p className="role">Product Development</p>
@@ -297,6 +296,11 @@ export default function AboutClientPage() {
                                         <li>
                                             <strong>100만 건 처리 5분 → 10초</strong>,{' '}
                                             <strong>Excel 파싱 10분 → 10~20초</strong> 성능 개선
+                                        </li>
+                                        <li>
+                                            VisualVM으로 Excel 업로드 병목을 분석하고 DOM 파싱을 SAX
+                                            스트리밍 방식으로 전환해 메모리 사용량
+                                            <strong>15GB → 4GB</strong>로 감소
                                         </li>
                                         <li>
                                             <strong>
@@ -319,7 +323,6 @@ export default function AboutClientPage() {
                             <TimelineItem>
                                 <div className="date-col">
                                     <span className="period">2019.10 - 2025.03</span>
-                                    <span className="duration">5 yrs 7 mos</span>
                                 </div>
                                 <div className="content-col">
                                     <h3 className="company">(주)코아텍</h3>
@@ -343,8 +346,10 @@ export default function AboutClientPage() {
                                             Security·JWT 기반 인증 로직 구현
                                         </li>
                                         <li>
-                                            MySQL 인덱스·파티셔닝 기반 대용량 조회 및 처리 성능
-                                            최적화
+                                            500만 건 이상 누적 계측 데이터의 집계 쿼리를
+                                            <strong>45.9초 → 0.03초</strong>로 개선. 서브쿼리를 LEFT
+                                            JOIN으로 전환하고 복합 인덱스를 적용한 뒤, 집계 로직
+                                            분리와 범위 파티셔닝으로 추가 최적화
                                         </li>
                                     </ul>
                                     <p className="role">DevOps & Infra</p>
@@ -650,7 +655,7 @@ export default function AboutClientPage() {
                                         <li>
                                             <strong>
                                                 폐쇄망 환경을 고려한 사내 맞춤형 코드 리뷰 봇
-                                                제안으로 AI 활용 공모전 대상 수상
+                                                제안으로 AI 활용 경진대회 대상 수상
                                             </strong>
                                         </li>
                                         <li>
@@ -993,7 +998,7 @@ export default function AboutClientPage() {
                                     </div>
                                     <div className="text-col">
                                         <div className="main-text">
-                                            웨어밸리 사내 AI 활용 공모전{' '}
+                                            웨어밸리 사내 AI 활용 경진대회{' '}
                                             <span className="highlight">대상</span>
                                         </div>
                                         <div className="sub-text">
@@ -1039,7 +1044,7 @@ export default function AboutClientPage() {
                                             <span className="highlight">우수상</span>
                                         </div>
                                         <div className="sub-text">
-                                            언리얼 엔진 활용 경관심의 진행 프로그램 개발 (2020.10)
+                                            언리얼 엔진 활용 경관심의 진행 프로그램 개발 (2020.11)
                                         </div>
                                     </div>
                                 </ListItem>
@@ -1102,7 +1107,7 @@ export default function AboutClientPage() {
                                         <div className="main-text">
                                             전자기능사 (Craftsman Electronics)
                                         </div>
-                                        <div className="sub-text">한국산업인력공단 (2020.09)</div>
+                                        <div className="sub-text">한국산업인력공단 (2019.07)</div>
                                     </div>
                                 </ListItem>
                                 <ListItem>
@@ -1110,10 +1115,8 @@ export default function AboutClientPage() {
                                         <Award size={18} className="icon gray" />
                                     </div>
                                     <div className="text-col">
-                                        <div className="main-text">
-                                            정보처리기능사 (Craftsman Information Processing)
-                                        </div>
-                                        <div className="sub-text">한국산업인력공단 (2019.06)</div>
+                                        <div className="main-text">프로그래밍기능사</div>
+                                        <div className="sub-text">한국산업인력공단 (2019.04)</div>
                                     </div>
                                 </ListItem>
                                 <ListItem>
@@ -1178,6 +1181,21 @@ export default function AboutClientPage() {
                                         </div>
                                     </div>
                                 </ListItem>
+                                <ListItem>
+                                    <div className="text-col">
+                                        <div className="main-text">
+                                            AWS Cloud Clubs 실습 세션 발표
+                                        </div>
+                                        <div className="sub-text">
+                                            k6 탐색적 부하 테스트와 SLI 측정, CloudWatch 및 SNS 알림
+                                            실습 진행 (2025.07)
+                                        </div>
+                                        <div className="sub-text">
+                                            Chaos Engineering 개념 소개와 CloudFormation 및 AWS FIS
+                                            기반 EC2 장애 주입 실습 진행 (2026.02, 실습 계정 환경)
+                                        </div>
+                                    </div>
+                                </ListItem>
                                 <SubsectionTitle>Mentoring</SubsectionTitle>
                                 <ListItem>
                                     <div className="text-col">
@@ -1185,7 +1203,12 @@ export default function AboutClientPage() {
                                             코드잇 풀스택 스프린트 부트캠프 멘토
                                         </div>
                                         <div className="sub-text">
-                                            FullStack 9기·13기 멘토링 및 실무 관점 피드백 진행
+                                            FullStack 9기, 13기, 14기, 15기 참여. 주간 GitHub 코드
+                                            리뷰와 팀당 주 1시간 프로젝트 지도 및 기술 질문 응답
+                                        </div>
+                                        <div className="sub-text">
+                                            자동화 테스트와 일정 관리 방법을 지도하고, 프로젝트
+                                            마지막 주를 QA와 테스트에 집중하도록 도운 사례 보유
                                         </div>
                                     </div>
                                 </ListItem>
@@ -1333,8 +1356,8 @@ export default function AboutClientPage() {
 // 스타일컴포넌트
 const PageContainer = styled.div`
     min-height: 100vh;
-    background-color: #ffffff;
-    color: #1e293b;
+    background-color: var(--palette-ffffff);
+    color: var(--palette-1e293b);
     padding-bottom: 8rem;
 `;
 
@@ -1343,7 +1366,7 @@ const ProgressBar = styled.div`
     top: 0;
     left: 0;
     height: 4px;
-    background: linear-gradient(to right, #3b82f6, #8b5cf6);
+    background: linear-gradient(to right, var(--palette-3b82f6), var(--palette-8b5cf6));
     z-index: 100;
     transition: width 0.1s ease-out;
 `;
@@ -1395,7 +1418,7 @@ const HeroTitle = styled.h1`
     margin-bottom: 0.5rem;
     .eng {
         font-weight: 400;
-        color: #94a3b8;
+        color: var(--palette-94a3b8);
         font-size: 1.8rem;
         margin-left: 0.5rem;
     }
@@ -1415,7 +1438,7 @@ const MetaInfo = styled.div`
         align-items: center;
         gap: 0.5rem;
         font-weight: 700;
-        color: #60a5fa;
+        color: var(--palette-60a5fa);
         text-transform: uppercase;
         font-size: 0.875rem;
         letter-spacing: 0.05em;
@@ -1477,13 +1500,13 @@ const SidebarContent = styled.div`
 
 const TocBox = styled.div`
     padding-left: 1.5rem;
-    border-left: 2px solid #e2e8f0;
+    border-left: 2px solid var(--palette-e2e8f0);
 
     .toc-header {
         font-size: 0.75rem;
         font-weight: 700;
         text-transform: uppercase;
-        color: #94a3b8;
+        color: var(--palette-94a3b8);
         margin-bottom: 1rem;
         letter-spacing: 0.05em;
     }
@@ -1520,13 +1543,13 @@ const TocItem = styled.li<{ $active: boolean; $level: number }>`
 
     a {
         display: block;
-        color: ${(props) => (props.$active ? '#1e293b' : '#94a3b8')};
+        color: ${(props) => (props.$active ? 'var(--palette-1e293b)' : 'var(--palette-94a3b8)')};
         font-weight: ${(props) => (props.$active ? '700' : '400')};
         text-decoration: none;
         line-height: 1.4;
         transition: color 0.2s;
         &:hover {
-            color: #3b82f6;
+            color: var(--palette-3b82f6);
         }
     }
 `;
@@ -1557,10 +1580,10 @@ const DownloadBtn = styled.a`
 `;
 
 const ContactForm = styled.div`
-    background-color: #f8fafc;
+    background-color: var(--palette-f8fafc);
     padding: 1.5rem;
     border-radius: 1rem;
-    border: 1px solid #f1f5f9;
+    border: 1px solid var(--palette-f1f5f9);
 
     .form-header {
         display: flex;
@@ -1568,7 +1591,7 @@ const ContactForm = styled.div`
         gap: 0.5rem;
         font-size: 0.875rem;
         font-weight: 700;
-        color: #475569;
+        color: var(--palette-475569);
         margin-bottom: 1rem;
     }
 `;
@@ -1580,7 +1603,7 @@ const InputGroup = styled.div`
         display: block;
         font-size: 0.75rem;
         font-weight: 600;
-        color: #64748b;
+        color: var(--palette-64748b);
         margin-bottom: 0.4rem;
     }
 
@@ -1591,7 +1614,7 @@ const InputGroup = styled.div`
             left: 0.75rem;
             top: 50%;
             transform: translateY(-50%);
-            color: #94a3b8;
+            color: var(--palette-94a3b8);
         }
     }
 
@@ -1600,14 +1623,14 @@ const InputGroup = styled.div`
         width: 100%;
         padding: 0.6rem 0.75rem;
         font-size: 0.875rem;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--palette-e2e8f0);
         border-radius: 0.5rem;
         outline: none;
         transition: all 0.2s;
-        background: white;
+        background: var(--palette-ffffff);
 
         &:focus {
-            border-color: #3b82f6;
+            border-color: var(--palette-3b82f6);
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
         }
     }
@@ -1648,7 +1671,7 @@ const Section = styled.section`
 const SectionTitle = styled.h2`
     font-size: 1.75rem;
     font-weight: 800;
-    color: #0f172a;
+    color: var(--palette-0f172a);
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
     margin-top: 0;
@@ -1661,7 +1684,7 @@ const SectionHeader = styled.div<{ $clickable?: boolean }>`
     gap: 1rem;
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--palette-e2e8f0);
     cursor: ${(props) => (props.$clickable ? 'pointer' : 'default')};
 
     ${SectionTitle} {
@@ -1670,16 +1693,16 @@ const SectionHeader = styled.div<{ $clickable?: boolean }>`
     }
 
     &:focus-visible {
-        outline: ${(props) => (props.$clickable ? '2px solid #bfdbfe' : 'none')};
+        outline: ${(props) => (props.$clickable ? '2px solid var(--palette-bfdbfe)' : 'none')};
         outline-offset: 6px;
         border-radius: 0.25rem;
     }
 `;
 
 const SectionToggle = styled.button`
-    border: 1px solid #dbe3ee;
-    background: #ffffff;
-    color: #64748b;
+    border: 1px solid var(--palette-dbe3ee);
+    background: var(--palette-ffffff);
+    color: var(--palette-64748b);
     border-radius: 999px;
     width: 2rem;
     height: 2rem;
@@ -1691,9 +1714,9 @@ const SectionToggle = styled.button`
     flex-shrink: 0;
 
     &:hover {
-        color: #1e293b;
-        border-color: #cbd5e1;
-        background: #f8fafc;
+        color: var(--palette-1e293b);
+        border-color: var(--palette-cbd5e1);
+        background: var(--palette-f8fafc);
     }
 `;
 
@@ -1714,17 +1737,17 @@ const IntroBox = styled.div`
     .text {
         flex: 1;
         line-height: 1.7;
-        color: #334155;
+        color: var(--palette-334155);
         p {
             margin-bottom: 1rem;
         }
     }
     .profile-img {
         flex-shrink: 0;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--palette-e2e8f0);
         border-radius: 1rem;
         padding: 0.5rem;
-        background: white;
+        background: var(--palette-ffffff);
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     }
 
@@ -1737,8 +1760,8 @@ const IntroBox = styled.div`
 `;
 
 const Highlight = styled.span`
-    background-color: #eff6ff;
-    color: #1d4ed8;
+    background-color: var(--palette-eff6ff);
+    color: var(--palette-1d4ed8);
     font-weight: 600;
     padding: 0 0.2rem;
     border-radius: 0.2rem;
@@ -1763,7 +1786,7 @@ const TimelineItem = styled.div`
         flex-shrink: 0;
         width: 140px;
         text-align: right;
-        color: #64748b;
+        color: var(--palette-64748b);
         font-size: 0.9rem;
         font-weight: 500;
         .period {
@@ -1788,12 +1811,12 @@ const TimelineItem = styled.div`
 
     .content-col {
         flex: 1;
-        border-left: 2px solid #e2e8f0;
+        border-left: 2px solid var(--palette-e2e8f0);
         padding-left: 1.5rem;
         padding-bottom: 2rem;
 
         @media (max-width: 640px) {
-            border-left: 2px solid #e2e8f0;
+            border-left: 2px solid var(--palette-e2e8f0);
             margin-left: 0.5rem;
             padding-left: 1rem;
         }
@@ -1801,18 +1824,18 @@ const TimelineItem = styled.div`
         .company {
             font-size: 1.1rem;
             font-weight: 700;
-            color: #0f172a;
+            color: var(--palette-0f172a);
             margin-bottom: 0.2rem;
         }
         .role {
             font-size: 0.9rem;
-            color: #2563eb;
+            color: var(--palette-2563eb);
             font-weight: 600;
             margin-bottom: 0.8rem;
         }
         .desc {
             font-size: 0.9rem;
-            color: #334155;
+            color: var(--palette-334155);
             line-height: 1.6;
             margin-bottom: 0.5rem;
         }
@@ -1820,7 +1843,7 @@ const TimelineItem = styled.div`
         .details {
             list-style: disc;
             padding-left: 1rem;
-            color: #475569;
+            color: var(--palette-475569);
             font-size: 0.9rem;
             line-height: 1.6;
             li {
@@ -1842,7 +1865,7 @@ const ListContainer = styled.div`
 const SubsectionTitle = styled.h3`
     font-size: 0.85rem;
     font-weight: 700;
-    color: #64748b;
+    color: var(--palette-64748b);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin-top: 0.5rem;
@@ -1857,16 +1880,16 @@ const ListItem = styled.div`
         padding-top: 0.2rem;
         .icon {
             &.gold {
-                color: #eab308;
+                color: var(--palette-eab308);
             }
             &.silver {
-                color: #94a3b8;
+                color: var(--palette-94a3b8);
             }
             &.blue {
-                color: #3b82f6;
+                color: var(--palette-3b82f6);
             }
             &.gray {
-                color: #9ca3af;
+                color: var(--palette-9ca3af);
             }
         }
     }
@@ -1875,15 +1898,15 @@ const ListItem = styled.div`
         .main-text {
             font-size: 0.95rem;
             font-weight: 600;
-            color: #1e293b;
+            color: var(--palette-1e293b);
             margin-bottom: 0.1rem;
         }
         .sub-text {
             font-size: 0.85rem;
-            color: #64748b;
+            color: var(--palette-64748b);
         }
         .highlight {
-            color: #2563eb;
+            color: var(--palette-2563eb);
             font-weight: 700;
         }
     }
@@ -1891,13 +1914,13 @@ const ListItem = styled.div`
 
 const Divider = styled.div`
     height: 1px;
-    background-color: #e2e8f0;
+    background-color: var(--palette-e2e8f0);
     margin: 1rem 0;
 `;
 
 const CardSurface = css`
-    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-    border: 1px solid #e2e8f0;
+    background: linear-gradient(180deg, var(--palette-ffffff) 0%, var(--palette-f8fbff) 100%);
+    border: 1px solid var(--palette-e2e8f0);
     border-radius: 1rem;
     box-shadow: 0 14px 30px -24px rgba(15, 23, 42, 0.28);
 `;
@@ -1916,18 +1939,18 @@ const ProjectCard = styled.div`
         h3 {
             font-size: 1.1rem;
             font-weight: 700;
-            color: #0f172a;
+            color: var(--palette-0f172a);
         }
         .sub {
             font-size: 0.8rem;
-            color: #64748b;
+            color: var(--palette-64748b);
             margin-top: 0.2rem;
         }
     }
 
     .desc {
         font-size: 0.9rem;
-        color: #334155;
+        color: var(--palette-334155);
         line-height: 1.6;
         margin-bottom: 1rem;
     }
@@ -1945,7 +1968,7 @@ const ProjectCard = styled.div`
         gap: 0.4rem;
         font-size: 0.8rem;
         font-weight: 600;
-        color: #2563eb;
+        color: var(--palette-2563eb);
         text-decoration: none;
         &:hover {
             text-decoration: underline;
@@ -1954,7 +1977,7 @@ const ProjectCard = styled.div`
 
     .role {
         font-size: 0.85rem;
-        color: #2563eb;
+        color: var(--palette-2563eb);
         font-weight: 600;
         margin-bottom: 1rem;
     }
@@ -1972,7 +1995,7 @@ const ProjectGrid = styled.div`
     .details {
         list-style: none;
         font-size: 0.85rem;
-        color: #475569;
+        color: var(--palette-475569);
         li {
             position: relative;
             padding-left: 0.8rem;
@@ -1996,17 +2019,17 @@ const Badge = styled.span<{ $variant?: string }>`
     ${(props) =>
         props.$variant === 'purple'
             ? css`
-                  background: #f3e8ff;
-                  color: #7e22ce;
+                  background: var(--palette-f3e8ff);
+                  color: var(--palette-7e22ce);
               `
             : props.$variant === 'gray'
               ? css`
-                    background: #f1f5f9;
-                    color: #475569;
+                    background: var(--palette-f1f5f9);
+                    color: var(--palette-475569);
                 `
               : css`
-                    background: #eff6ff;
-                    color: #1d4ed8;
+                    background: var(--palette-eff6ff);
+                    color: var(--palette-1d4ed8);
                 `}
 `;
 
@@ -2026,7 +2049,7 @@ const SkillBox = styled.div`
     h4 {
         font-size: 0.9rem;
         font-weight: 700;
-        color: #64748b;
+        color: var(--palette-64748b);
         margin-bottom: 0.65rem;
         display: flex;
         align-items: center;
@@ -2047,24 +2070,24 @@ const SkillTag = styled.span<{ $highlight?: boolean }>`
     ${(props) =>
         props.$highlight
             ? css`
-                  background: #eff6ff;
-                  color: #1d4ed8;
+                  background: var(--palette-eff6ff);
+                  color: var(--palette-1d4ed8);
                   font-weight: 600;
-                  border: 1px solid #dbeafe;
+                  border: 1px solid var(--palette-dbeafe);
               `
             : css`
-                  background: #f8fafc;
-                  color: #475569;
-                  border: 1px solid #f1f5f9;
+                  background: var(--palette-f8fafc);
+                  color: var(--palette-475569);
+                  border: 1px solid var(--palette-f1f5f9);
               `}
 `;
 
 const TechTag = styled.span`
     font-size: 0.75rem;
-    background-color: #f1f5f9;
-    color: #475569;
+    background-color: var(--palette-f1f5f9);
+    color: var(--palette-475569);
     padding: 0.2rem 0.5rem;
     border-radius: 0.3rem;
     font-weight: 500;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--palette-e2e8f0);
 `;

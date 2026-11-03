@@ -86,8 +86,8 @@ export default function LandingPage({ posts }: { posts: Post[] }) {
                         <Description>
                             웹과 인프라를 경계 없이 넘나드는 것을 좋아합니다.
                             <br />
-                            새로운 기술은 도구로써 사용하고, <strong>"왜"</strong>를 생각하고자
-                            합니다.
+                            새로운 기술은 도구로써 사용하고, <strong>&quot;왜&quot;</strong>를
+                            생각하고자 합니다.
                             <br />
                             <strong>모두와 함께 성장하는</strong>, 믿음직한 개발자가 되고자 합니다.
                         </Description>
@@ -122,21 +122,26 @@ export default function LandingPage({ posts }: { posts: Post[] }) {
                                 <CodeContent>
                                     <span className="keyword">const</span>{' '}
                                     <span className="variable">chanbeen</span> = {'{'}
-                                    {'\n'} <span className="comment">// Current Status</span>
+                                    {'\n'} <span className="comment">{'// Current Status'}</span>
                                     {'\n'} role:{' '}
-                                    <span className="string">"Full-Stack Engineer"</span>,{'\n'}
-                                    {'\n'} <span className="comment">// Growing towards...</span>
-                                    {'\n'} nextGoal: [<span className="string">"DevOps"</span>,{' '}
-                                    <span className="string">"Cloud Specialist"</span>],
+                                    <span className="string">&quot;Full-Stack Engineer&quot;</span>,
                                     {'\n'}
-                                    {'\n'} <span className="comment">// Key Strengths</span>
+                                    {'\n'}{' '}
+                                    <span className="comment">{'// Growing towards...'}</span>
+                                    {'\n'} nextGoal: [
+                                    <span className="string">&quot;DevOps&quot;</span>,{' '}
+                                    <span className="string">&quot;Cloud Specialist&quot;</span>],
+                                    {'\n'}
+                                    {'\n'} <span className="comment">{'// Key Strengths'}</span>
                                     {'\n'} skills: [
-                                    <span className="string">"Macro Perspective"</span>,{' '}
-                                    <span className="string">"AI"</span>],
+                                    <span className="string">&quot;Macro Perspective&quot;</span>,{' '}
+                                    <span className="string">&quot;AI&quot;</span>],
                                     {'\n'}
-                                    {'\n'} <span className="comment">// Mission</span>
+                                    {'\n'} <span className="comment">{'// Mission'}</span>
                                     {'\n'} focus:{' '}
-                                    <span className="variable">"Building Good Software"</span>
+                                    <span className="variable">
+                                        &quot;Building Good Software&quot;
+                                    </span>
                                     {'\n'}
                                     {'}'};
                                 </CodeContent>
@@ -148,7 +153,7 @@ export default function LandingPage({ posts }: { posts: Post[] }) {
                                 </div>
                             </ProfileCard>
 
-                            <FloatingCard href="/about" $top="-2rem" $right="-3.5rem" $delay="0.1s">
+                            <FloatingCard href="/about" $top="-2rem" $right="-4.5rem" $delay="0.1s">
                                 <div className="icon-box green">
                                     <Code2 size={20} />
                                 </div>
@@ -161,7 +166,7 @@ export default function LandingPage({ posts }: { posts: Post[] }) {
                             <FloatingCard
                                 href="/about"
                                 $bottom="-1.5rem"
-                                $left="-2rem"
+                                $left="-3rem"
                                 $delay="0.7s"
                             >
                                 <div className="icon-box orange">
@@ -173,7 +178,7 @@ export default function LandingPage({ posts }: { posts: Post[] }) {
                                 </div>
                             </FloatingCard>
 
-                            <FloatingCard href="/about" $top="0.5rem" $left="-2rem" $delay="1s">
+                            <FloatingCard href="/about" $top="0.5rem" $left="-3rem" $delay="1s">
                                 <div className="icon-box purple">
                                     <BookOpen size={20} />
                                 </div>
@@ -186,7 +191,7 @@ export default function LandingPage({ posts }: { posts: Post[] }) {
                             <FloatingCard
                                 href="/about"
                                 $bottom="-0.5rem"
-                                $right="-2rem"
+                                $right="-3rem"
                                 $delay="1.5s"
                             >
                                 <div className="icon-box blue">
@@ -360,8 +365,8 @@ const ping = keyframes`
 
 const Container = styled.div`
     min-height: 100vh;
-    background-color: #f8fafc;
-    color: #0f172a;
+    background-color: var(--palette-f8fafc);
+    color: var(--palette-0f172a);
     font-family:
         -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     overflow-x: hidden;
@@ -415,11 +420,11 @@ const Badge = styled.div`
     gap: 0.5rem;
     padding: 0.375rem 0.75rem;
     border-radius: 9999px;
-    background-color: #eff6ff;
-    border: 1px solid #dbeafe;
+    background-color: var(--palette-eff6ff);
+    border: 1px solid var(--palette-dbeafe);
     font-size: 0.75rem;
     font-weight: 700;
-    color: #1d4ed8;
+    color: var(--palette-1d4ed8);
     margin-bottom: 2rem;
 
     .indicator {
@@ -435,7 +440,7 @@ const Badge = styled.div`
         height: 100%;
         width: 100%;
         border-radius: 9999px;
-        background-color: #60a5fa;
+        background-color: var(--palette-60a5fa);
         opacity: 0.75;
     }
     .dot {
@@ -453,7 +458,7 @@ const MainTitle = styled.h1`
     font-weight: 900;
     line-height: 1.05;
     letter-spacing: -0.025em;
-    color: #0f172a;
+    color: var(--palette-0f172a);
     margin-bottom: 2rem;
 
     @media (min-width: 640px) {
@@ -461,7 +466,7 @@ const MainTitle = styled.h1`
     }
 
     span {
-        background: linear-gradient(to right, #1d4ed8, #4f46e5);
+        background: linear-gradient(to right, var(--palette-1d4ed8), var(--palette-4f46e5));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
@@ -469,14 +474,14 @@ const MainTitle = styled.h1`
 
 const Description = styled.p`
     font-size: 1.125rem;
-    color: #475569;
+    color: var(--palette-475569);
     line-height: 1.625;
     font-weight: 500;
     max-width: 36rem;
     margin-bottom: 2.5rem;
 
     strong {
-        color: #0f172a;
+        color: var(--palette-0f172a);
         font-weight: 700;
     }
 `;
@@ -515,13 +520,13 @@ const Button = styled.button<{ $primary?: boolean }>`
                   }
               `
             : css`
-                  background-color: white;
-                  color: #334155;
-                  border: 1px solid #e2e8f0;
+                  background-color: var(--palette-ffffff);
+                  color: var(--palette-334155);
+                  border: 1px solid var(--palette-e2e8f0);
 
                   &:hover {
-                      background-color: #f8fafc;
-                      border-color: #cbd5e1;
+                      background-color: var(--palette-f8fafc);
+                      border-color: var(--palette-cbd5e1);
                   }
               `}
 `;
@@ -568,10 +573,32 @@ const CodeWindowWrapper = styled.div`
 `;
 
 const CodeWindow = styled.div`
-    background-color: #0f172a;
+    --code-bg: #0f172a;
+    --code-header: #1e293b;
+    --code-border: #334155;
+    --code-text: #cbd5e1;
+    --code-muted: #94a3b8;
+    --code-keyword: #c084fc;
+    --code-variable: #60a5fa;
+    --code-string: #4ade80;
+    --code-comment: #94a3b8;
+
+    html.dark & {
+        --code-bg: #ffffff;
+        --code-header: #f1f5f9;
+        --code-border: #cbd5e1;
+        --code-text: #1e293b;
+        --code-muted: #64748b;
+        --code-keyword: #7e22ce;
+        --code-variable: #1d4ed8;
+        --code-string: #15803d;
+        --code-comment: #64748b;
+    }
+
+    background-color: var(--code-bg);
     border-radius: 1rem;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    border: 1px solid #1e293b;
+    border: 1px solid var(--code-border);
     overflow: hidden;
     position: relative;
     z-index: 10;
@@ -584,17 +611,17 @@ const CodeWindow = styled.div`
 `;
 
 const CodeHeader = styled.div`
-    background-color: #1e293b;
+    background-color: var(--code-header);
     padding: 0.75rem 1rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    border-bottom: 1px solid #334155;
+    border-bottom: 1px solid var(--code-border);
 
     .filename {
         margin-left: 1rem;
         font-size: 0.75rem;
-        color: #94a3b8;
+        color: var(--code-muted);
         font-family: monospace;
     }
 `;
@@ -612,19 +639,19 @@ const CodeContent = styled.pre`
     font-family: monospace;
     font-size: 0.875rem;
     line-height: 1.6;
-    color: #cbd5e1;
+    color: var(--code-text);
 
     .keyword {
-        color: #c084fc;
+        color: var(--code-keyword);
     }
     .variable {
-        color: #60a5fa;
+        color: var(--code-variable);
     }
     .string {
-        color: #4ade80;
+        color: var(--code-string);
     }
     .comment {
-        color: #64748b;
+        color: var(--code-comment);
     }
 `;
 
@@ -640,11 +667,11 @@ const FloatingCard = styled(Link)<{
     bottom: ${(props) => props.$bottom || 'auto'};
     left: ${(props) => props.$left || 'auto'};
     right: ${(props) => props.$right || 'auto'};
-    background: white;
+    background: var(--palette-ffffff);
     padding: 1rem;
     border-radius: 1rem;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    border: 1px solid #f1f5f9;
+    border: 1px solid var(--palette-f1f5f9);
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -664,33 +691,33 @@ const FloatingCard = styled(Link)<{
         border-radius: 0.75rem;
         display: flex;
         &.green {
-            background: #dcfce7;
-            color: #16a34a;
+            background: var(--palette-dcfce7);
+            color: var(--palette-16a34a);
         }
         &.orange {
-            background: #ffedd5;
-            color: #ea580c;
+            background: var(--palette-ffedd5);
+            color: var(--palette-ea580c);
         }
         &.purple {
-            background: #f3e8ff;
-            color: #9333ea;
+            background: var(--palette-f3e8ff);
+            color: var(--palette-9333ea);
         }
         &.blue {
-            background: #dbeafe;
-            color: #2563eb;
+            background: var(--palette-dbeafe);
+            color: var(--palette-2563eb);
         }
     }
 
     .label {
         font-size: 0.625rem;
         font-weight: 700;
-        color: #94a3b8;
+        color: var(--palette-94a3b8);
         text-transform: uppercase;
     }
     .value {
         font-size: 0.875rem;
         font-weight: 700;
-        color: #1e293b;
+        color: var(--palette-1e293b);
     }
 `;
 
@@ -711,7 +738,7 @@ const ProfileCard = styled(FloatingCard)`
         height: 4rem;
         border-radius: 0.75rem;
         overflow: hidden;
-        background-color: #f1f5f9;
+        background-color: var(--palette-f1f5f9);
 
         img {
             width: 100%;
@@ -724,7 +751,7 @@ const ProfileCard = styled(FloatingCard)`
 // --- Section 2 ---
 const BlogSection = styled.section`
     padding: 8rem 0;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--palette-e2e8f0);
 `;
 
 const SectionHeader = styled.div`
@@ -742,13 +769,13 @@ const SectionHeader = styled.div`
 const SectionTitle = styled.h2`
     font-size: 1.875rem;
     font-weight: 900;
-    color: #0f172a;
+    color: var(--palette-0f172a);
     margin-bottom: 0.75rem;
     letter-spacing: -0.025em;
 `;
 
 const SectionSubtitle = styled.p`
-    color: #64748b;
+    color: var(--palette-64748b);
     font-size: 1rem;
 `;
 
@@ -777,16 +804,16 @@ const CategoryBtn = styled.button<{ $active: boolean }>`
             ? css`
                   background-color: #0f172a;
                   color: white;
-                  border-color: #0f172a;
+                  border-color: var(--palette-0f172a);
                   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
               `
             : css`
-                  background-color: white;
-                  color: #64748b;
-                  border-color: #e2e8f0;
+                  background-color: var(--palette-ffffff);
+                  color: var(--palette-64748b);
+                  border-color: var(--palette-e2e8f0);
                   &:hover {
-                      background-color: #f8fafc;
-                      border-color: #cbd5e1;
+                      background-color: var(--palette-f8fafc);
+                      border-color: var(--palette-cbd5e1);
                   }
               `}
 `;
@@ -804,8 +831,8 @@ const BlogCard = styled(Link)`
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: white;
-    border: 1px solid #e2e8f0;
+    background: var(--palette-ffffff);
+    border: 1px solid var(--palette-e2e8f0);
     border-radius: 1rem;
     overflow: hidden;
     text-decoration: none;
@@ -814,7 +841,7 @@ const BlogCard = styled(Link)`
     transform: translateZ(0);
 
     &:hover {
-        border-color: #93c5fd;
+        border-color: var(--palette-93c5fd);
         transform: translateY(-4px);
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
@@ -824,7 +851,7 @@ const ThumbnailWrapper = styled.div`
     position: relative;
     height: 12rem;
     width: 100%;
-    background-color: #f1f5f9;
+    background-color: var(--palette-f1f5f9);
     overflow: hidden;
     border-top-left-radius: 1rem;
     border-top-right-radius: 1rem;
@@ -848,9 +875,9 @@ const ThumbnailWrapper = styled.div`
         left: 1rem;
         z-index: 10;
         padding: 0.25rem 0.75rem;
-        background-color: rgba(255, 255, 255, 0.9);
+        background-color: var(--overlay-bg);
         backdrop-filter: blur(4px);
-        color: #334155;
+        color: var(--palette-334155);
         font-size: 0.625rem;
         font-weight: 700;
         text-transform: uppercase;
@@ -872,7 +899,7 @@ const CardContent = styled.div`
         gap: 0.5rem;
         margin-bottom: 0.75rem;
         font-size: 0.75rem;
-        color: #94a3b8;
+        color: var(--palette-94a3b8);
         font-family: monospace;
         font-weight: 500;
     }
@@ -880,17 +907,17 @@ const CardContent = styled.div`
     h3 {
         font-size: 1.25rem;
         font-weight: 700;
-        color: #0f172a;
+        color: var(--palette-0f172a);
         margin-bottom: 0.75rem;
         line-height: 1.4;
         transition: color 0.2s;
     }
     ${BlogCard}:hover & h3 {
-        color: #2563eb;
+        color: var(--palette-2563eb);
     }
 
     p {
-        color: #64748b;
+        color: var(--palette-64748b);
         font-size: 0.875rem;
         line-height: 1.6;
         margin-bottom: 1.5rem;
@@ -906,17 +933,17 @@ const CardContent = styled.div`
         align-items: center;
         font-size: 0.75rem;
         font-weight: 700;
-        color: #0f172a;
+        color: var(--palette-0f172a);
         margin-top: auto;
         padding-top: 1.25rem;
-        border-top: 1px solid #f1f5f9;
+        border-top: 1px solid var(--palette-f1f5f9);
         transition: color 0.2s;
         svg {
             margin-left: 0.5rem;
         }
     }
     ${BlogCard}:hover & .read-more {
-        color: #2563eb;
+        color: var(--palette-2563eb);
     }
 `;
 
@@ -924,17 +951,17 @@ const EmptyState = styled.div`
     grid-column: 1 / -1;
     padding: 5rem 0;
     text-align: center;
-    color: #94a3b8;
-    background-color: #f8fafc;
+    color: var(--palette-94a3b8);
+    background-color: var(--palette-f8fafc);
     border-radius: 1rem;
-    border: 1px dashed #e2e8f0;
+    border: 1px dashed var(--palette-e2e8f0);
 `;
 
 // --- Section 3 ---
 const ContactSection = styled.section`
     padding: 8rem 0;
-    background-color: white;
-    border-top: 1px solid #e2e8f0;
+    background-color: var(--palette-ffffff);
+    border-top: 1px solid var(--palette-e2e8f0);
 `;
 
 const ContactGrid = styled.div`
@@ -950,13 +977,13 @@ const ContactGrid = styled.div`
     .info h2 {
         font-size: 1.875rem;
         font-weight: 900;
-        color: #0f172a;
+        color: var(--palette-0f172a);
         letter-spacing: -0.025em;
         margin-bottom: 1rem;
     }
 
     .info p {
-        color: #475569;
+        color: var(--palette-475569);
         font-size: 1.125rem;
         line-height: 1.7;
         margin-bottom: 2rem;
@@ -967,7 +994,7 @@ const ContactGrid = styled.div`
         align-items: center;
         gap: 0.75rem;
         margin-bottom: 1rem;
-        color: #475569;
+        color: var(--palette-475569);
         span {
             font-weight: 500;
         }
@@ -981,21 +1008,21 @@ const ContactGrid = styled.div`
         align-items: center;
         justify-content: center;
         &.blue {
-            background-color: #eff6ff;
-            color: #2563eb;
+            background-color: var(--palette-eff6ff);
+            color: var(--palette-2563eb);
         }
         &.green {
-            background-color: #f0fdf4;
-            color: #16a34a;
+            background-color: var(--palette-f0fdf4);
+            color: var(--palette-16a34a);
         }
     }
 `;
 
 const ContactForm = styled.div`
-    background-color: #f8fafc;
+    background-color: var(--palette-f8fafc);
     padding: 2rem;
     border-radius: 1.5rem;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--palette-e2e8f0);
 `;
 
 const InputGroup = styled.div`
@@ -1004,7 +1031,7 @@ const InputGroup = styled.div`
         display: block;
         font-size: 0.75rem;
         font-weight: 700;
-        color: #64748b;
+        color: var(--palette-64748b);
         text-transform: uppercase;
         margin-bottom: 0.5rem;
     }
@@ -1015,7 +1042,7 @@ const InputGroup = styled.div`
             left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            color: #94a3b8;
+            color: var(--palette-94a3b8);
         }
     }
 `;
@@ -1023,15 +1050,15 @@ const InputGroup = styled.div`
 const Input = styled.input`
     width: 100%;
     padding: 0.75rem 1rem 0.75rem 2.5rem;
-    background: white;
-    border: 1px solid #e2e8f0;
+    background: var(--palette-ffffff);
+    border: 1px solid var(--palette-e2e8f0);
     border-radius: 0.75rem;
     font-size: 0.875rem;
     font-weight: 500;
     transition: all 0.2s;
     outline: none;
     &:focus {
-        border-color: #3b82f6;
+        border-color: var(--palette-3b82f6);
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
 `;
@@ -1039,8 +1066,8 @@ const Input = styled.input`
 const TextArea = styled.textarea`
     width: 100%;
     padding: 0.75rem 1rem;
-    background: white;
-    border: 1px solid #e2e8f0;
+    background: var(--palette-ffffff);
+    border: 1px solid var(--palette-e2e8f0);
     border-radius: 0.75rem;
     font-size: 0.875rem;
     font-weight: 500;
@@ -1048,7 +1075,7 @@ const TextArea = styled.textarea`
     resize: none;
     outline: none;
     &:focus {
-        border-color: #3b82f6;
+        border-color: var(--palette-3b82f6);
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
 `;
