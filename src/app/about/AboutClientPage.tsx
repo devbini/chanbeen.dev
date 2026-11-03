@@ -264,7 +264,6 @@ export default function AboutClientPage() {
                             <TimelineItem>
                                 <div className="date-col">
                                     <span className="period">2025.04 - Present</span>
-                                    <span className="duration">1 yr</span>
                                 </div>
                                 <div className="content-col">
                                     <h3 className="company">(주)웨어밸리 (WareValley)</h3>
@@ -279,17 +278,17 @@ export default function AboutClientPage() {
                                     <ul className="details">
                                         <li>
                                             <strong>
-                                                GitLab CI/CD, Jenkins, Docker, ArgoCD, k3s 기반 내부
-                                                개발 인프라 및 배포 자동화 환경 구축
+                                                개발과 QA가 제품을 같은 조건에서 확인할 수 있도록
+                                                k3s 기반 내부 컨테이너 환경 신규 구축
                                             </strong>
                                         </li>
                                         <li>
-                                            Ansible 기반 IaC 구성과 폐쇄망·외부망 조건을 고려한 배포
-                                            흐름 표준화
+                                            Jenkins 빌드와 GitLab Container Registry 이미지 저장,
+                                            manifest 갱신과 Argo CD Sync를 연결한 GitOps 배포 자동화
                                         </li>
                                         <li>
-                                            반복 운영 작업 축소를 위한 서버 환경 일관성 정비 및
-                                            자동화 운영
+                                            Ansible로 서버 초기 설정과 운영 도구 설치 표준화,
+                                            Terraform으로 GitLab 계정, 그룹, Webhook 관리 코드화
                                         </li>
                                     </ul>
                                     <p className="role">Product Development</p>
@@ -297,6 +296,11 @@ export default function AboutClientPage() {
                                         <li>
                                             <strong>100만 건 처리 5분 → 10초</strong>,{' '}
                                             <strong>Excel 파싱 10분 → 10~20초</strong> 성능 개선
+                                        </li>
+                                        <li>
+                                            VisualVM으로 Excel 업로드 병목을 분석하고 DOM 파싱을 SAX
+                                            스트리밍 방식으로 전환해 메모리 사용량
+                                            <strong>15GB → 4GB</strong>로 감소
                                         </li>
                                         <li>
                                             <strong>
@@ -319,7 +323,6 @@ export default function AboutClientPage() {
                             <TimelineItem>
                                 <div className="date-col">
                                     <span className="period">2019.10 - 2025.03</span>
-                                    <span className="duration">5 yrs 7 mos</span>
                                 </div>
                                 <div className="content-col">
                                     <h3 className="company">(주)코아텍</h3>
@@ -343,8 +346,10 @@ export default function AboutClientPage() {
                                             Security·JWT 기반 인증 로직 구현
                                         </li>
                                         <li>
-                                            MySQL 인덱스·파티셔닝 기반 대용량 조회 및 처리 성능
-                                            최적화
+                                            500만 건 이상 누적 계측 데이터의 집계 쿼리를
+                                            <strong>45.9초 → 0.03초</strong>로 개선. 서브쿼리를 LEFT
+                                            JOIN으로 전환하고 복합 인덱스를 적용한 뒤, 집계 로직
+                                            분리와 범위 파티셔닝으로 추가 최적화
                                         </li>
                                     </ul>
                                     <p className="role">DevOps & Infra</p>
@@ -650,7 +655,7 @@ export default function AboutClientPage() {
                                         <li>
                                             <strong>
                                                 폐쇄망 환경을 고려한 사내 맞춤형 코드 리뷰 봇
-                                                제안으로 AI 활용 공모전 대상 수상
+                                                제안으로 AI 활용 경진대회 대상 수상
                                             </strong>
                                         </li>
                                         <li>
@@ -993,7 +998,7 @@ export default function AboutClientPage() {
                                     </div>
                                     <div className="text-col">
                                         <div className="main-text">
-                                            웨어밸리 사내 AI 활용 공모전{' '}
+                                            웨어밸리 사내 AI 활용 경진대회{' '}
                                             <span className="highlight">대상</span>
                                         </div>
                                         <div className="sub-text">
@@ -1039,7 +1044,7 @@ export default function AboutClientPage() {
                                             <span className="highlight">우수상</span>
                                         </div>
                                         <div className="sub-text">
-                                            언리얼 엔진 활용 경관심의 진행 프로그램 개발 (2020.10)
+                                            언리얼 엔진 활용 경관심의 진행 프로그램 개발 (2020.11)
                                         </div>
                                     </div>
                                 </ListItem>
@@ -1102,7 +1107,7 @@ export default function AboutClientPage() {
                                         <div className="main-text">
                                             전자기능사 (Craftsman Electronics)
                                         </div>
-                                        <div className="sub-text">한국산업인력공단 (2020.09)</div>
+                                        <div className="sub-text">한국산업인력공단 (2019.07)</div>
                                     </div>
                                 </ListItem>
                                 <ListItem>
@@ -1110,10 +1115,8 @@ export default function AboutClientPage() {
                                         <Award size={18} className="icon gray" />
                                     </div>
                                     <div className="text-col">
-                                        <div className="main-text">
-                                            정보처리기능사 (Craftsman Information Processing)
-                                        </div>
-                                        <div className="sub-text">한국산업인력공단 (2019.06)</div>
+                                        <div className="main-text">프로그래밍기능사</div>
+                                        <div className="sub-text">한국산업인력공단 (2019.04)</div>
                                     </div>
                                 </ListItem>
                                 <ListItem>
@@ -1178,6 +1181,21 @@ export default function AboutClientPage() {
                                         </div>
                                     </div>
                                 </ListItem>
+                                <ListItem>
+                                    <div className="text-col">
+                                        <div className="main-text">
+                                            AWS Cloud Clubs 실습 세션 발표
+                                        </div>
+                                        <div className="sub-text">
+                                            k6 탐색적 부하 테스트와 SLI 측정, CloudWatch 및 SNS 알림
+                                            실습 진행 (2025.07)
+                                        </div>
+                                        <div className="sub-text">
+                                            Chaos Engineering 개념 소개와 CloudFormation 및 AWS FIS
+                                            기반 EC2 장애 주입 실습 진행 (2026.02, 실습 계정 환경)
+                                        </div>
+                                    </div>
+                                </ListItem>
                                 <SubsectionTitle>Mentoring</SubsectionTitle>
                                 <ListItem>
                                     <div className="text-col">
@@ -1185,7 +1203,12 @@ export default function AboutClientPage() {
                                             코드잇 풀스택 스프린트 부트캠프 멘토
                                         </div>
                                         <div className="sub-text">
-                                            FullStack 9기·13기 멘토링 및 실무 관점 피드백 진행
+                                            FullStack 9기, 13기, 14기, 15기 참여. 주간 GitHub 코드
+                                            리뷰와 팀당 주 1시간 프로젝트 지도 및 기술 질문 응답
+                                        </div>
+                                        <div className="sub-text">
+                                            자동화 테스트와 일정 관리 방법을 지도하고, 프로젝트
+                                            마지막 주를 QA와 테스트에 집중하도록 도운 사례 보유
                                         </div>
                                     </div>
                                 </ListItem>
