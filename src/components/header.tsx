@@ -2,12 +2,69 @@
 
 import styled from 'styled-components';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import { FaReact, FaCloud, FaCoffee, FaPenNib } from 'react-icons/fa';
-import { Github, Linkedin, ChevronDown, Terminal, Camera } from 'lucide-react';
+import { Github, Linkedin, ChevronDown, Terminal, Camera, Menu, X } from 'lucide-react';
+
+const mobileLinks = [
+    { href: '/about', label: 'Resume' },
+    { href: '/blog', label: 'View All Posts' },
+    { href: '/photo', label: 'Photo Archive' },
+];
+
+const categoryLinks = [
+    { href: '/blog/category/devops', label: 'DevOps & Cloud', icon: FaCloud },
+    { href: '/blog/category/backend', label: 'Backend & Java', icon: FaCoffee },
+    { href: '/blog/category/frontend', label: 'Frontend', icon: FaReact },
+    { href: '/blog/category/essay', label: 'Essay', icon: FaPenNib },
+];
 
 export default function Header() {
+    const pathname = usePathname();
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const headerRef = useRef<HTMLElement>(null);
+    const menuButtonRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        setMobileOpen(false);
+    }, [pathname]);
+
+    useEffect(() => {
+        if (!mobileOpen) return;
+
+        const closeOnOutsideClick = (event: PointerEvent) => {
+            if (event.target instanceof Node && !headerRef.current?.contains(event.target)) {
+                setMobileOpen(false);
+            }
+        };
+        const closeOnEscape = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setMobileOpen(false);
+                menuButtonRef.current?.focus();
+            }
+        };
+        const desktop = window.matchMedia('(min-width: 768px)');
+        const closeOnDesktop = () => {
+            if (desktop.matches) setMobileOpen(false);
+        };
+        document.addEventListener('pointerdown', closeOnOutsideClick);
+        document.addEventListener('keydown', closeOnEscape);
+        desktop.addEventListener('change', closeOnDesktop);
+        return () => {
+            document.removeEventListener('pointerdown', closeOnOutsideClick);
+            document.removeEventListener('keydown', closeOnEscape);
+            desktop.removeEventListener('change', closeOnDesktop);
+        };
+    }, [mobileOpen]);
+
     return (
-        <HeaderWrapper>
+        <HeaderWrapper
+            ref={headerRef}
+            onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) setMobileOpen(false);
+            }}
+        >
             <NavContainer>
                 <LogoLink href="/">
                     <Terminal size={20} className="icon" />
@@ -47,17 +104,79 @@ export default function Header() {
                 </NavMenu>
 
                 <SocialLinks>
-                    <Link href="https://github.com/devbini" target="_blank">
+                    <Link href="https://github.com/devbini" target="_blank" aria-label="GitHub">
                         <Github size={18} />
                     </Link>
-                    <Link href="https://linkedin.com/in/chanbeen" target="_blank">
+                    <Link
+                        href="https://linkedin.com/in/chanbeen"
+                        target="_blank"
+                        aria-label="LinkedIn"
+                    >
                         <Linkedin size={18} />
                     </Link>
                     <Link href="/photo" aria-label="Photo archive">
                         <Camera size={18} />
                     </Link>
                 </SocialLinks>
+                <MobileMenuButton
+                    ref={menuButtonRef}
+                    type="button"
+                    aria-label={mobileOpen ? '메뉴 닫기' : '메뉴 열기'}
+                    aria-expanded={mobileOpen}
+                    aria-controls="mobile-navigation"
+                    onClick={() => setMobileOpen((open) => !open)}
+                >
+                    {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+                </MobileMenuButton>
             </NavContainer>
+            <MobileNavigation
+                id="mobile-navigation"
+                aria-label="모바일 메뉴"
+                hidden={!mobileOpen}
+                onClick={(event) => {
+                    if (event.target instanceof Element && event.target.closest('a')) {
+                        setMobileOpen(false);
+                    }
+                }}
+            >
+                {mobileLinks.map(({ href, label }) => (
+                    <Link
+                        key={href}
+                        href={href}
+                        aria-current={pathname === href ? 'page' : undefined}
+                    >
+                        {label}
+                    </Link>
+                ))}
+                <div className="categories">
+                    <p>Categories</p>
+                    {categoryLinks.map(({ href, label, icon: Icon }) => (
+                        <Link
+                            key={href}
+                            href={href}
+                            aria-current={pathname === href ? 'page' : undefined}
+                        >
+                            <Icon aria-hidden="true" /> {label}
+                        </Link>
+                    ))}
+                </div>
+                <div className="socials">
+                    <Link
+                        href="https://github.com/devbini"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        GitHub
+                    </Link>
+                    <Link
+                        href="https://linkedin.com/in/chanbeen"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        LinkedIn
+                    </Link>
+                </div>
+            </MobileNavigation>
         </HeaderWrapper>
     );
 }
@@ -234,6 +353,9 @@ const SocialLinks = styled.div`
     padding-left: 2rem;
     border-left: 1px solid var(--palette-e2e8f0);
     height: 1.5rem;
+    @media (max-width: 767px) {
+        display: none;
+    }
     @media (max-width: 480px) {
         gap: 0.65rem;
         padding-left: 0.75rem;
@@ -252,5 +374,87 @@ const SocialLinks = styled.div`
         &:nth-child(3):hover {
             color: var(--palette-0f172a);
         }
+    }
+`;
+
+const MobileMenuButton = styled.button`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 0.75rem;
+    color: var(--palette-0f172a);
+    cursor: pointer;
+
+    &:hover {
+        background: var(--palette-f1f5f9);
+    }
+    &:focus-visible {
+        outline: 2px solid var(--palette-2563eb);
+        outline-offset: 2px;
+    }
+    @media (min-width: 768px) {
+        display: none;
+    }
+`;
+
+const MobileNavigation = styled.nav`
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: calc(100vh - 4rem);
+    max-height: calc(100dvh - 4rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0.75rem 1rem 1rem;
+    background: var(--palette-ffffff);
+    border-bottom: 1px solid var(--palette-e2e8f0);
+    box-shadow: 0 16px 24px -16px rgb(0 0 0 / 24%);
+
+    &[hidden] {
+        display: none;
+    }
+    a {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        min-height: 44px;
+        padding: 0.65rem 0.75rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--palette-475569);
+        text-decoration: none;
+    }
+    a:hover,
+    a[aria-current='page'] {
+        background: var(--palette-f1f5f9);
+        color: var(--palette-2563eb);
+    }
+    a:focus-visible {
+        outline: 2px solid var(--palette-2563eb);
+        outline-offset: -2px;
+    }
+    .categories,
+    .socials {
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--palette-e2e8f0);
+    }
+    .categories p {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.625rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--palette-64748b);
+    }
+    .socials {
+        display: flex;
+        gap: 0.5rem;
+    }
+    @media (min-width: 768px) {
+        display: none;
     }
 `;
